@@ -1,1 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Current Affairs Hub — UKPSC &amp; UKSSSC</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css"/>
+<style>
+/* ── RESET & ROOT ─────────────────────────────────────── */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0d0f14;--bg2:#131720;--bg3:#1a1f2e;--bg4:#222840;
+  --border:#2a3050;--border2:#3a4570;
+  --text:#e8ecf8;--text2:#8a9bc0;--text3:#5a6888;
+  --accent:#4f6ef7;--accent2:#7c5af7;
+  --green:#3de0a0;--amber:#f7b93d;--teal:#3dd5e0;--coral:#f77c5a;
+  --red:#f75a7c;
+  --font:'Sora',sans-serif;--mono:'JetBrains Mono',monospace;
+  --r:10px;--r2:16px;
+  --sidebar-w:264px;
+}
+html,body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;font-size:14px;line-height:1.6}
+a{color:inherit;text-decoration:none}
+button{font-family:var(--font);cursor:pointer}
 
+/* ── LAYOUT ───────────────────────────────────────────── */
+#app{display:flex;min-height:100vh}
+#main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+
+/* ── SIDEBAR ──────────────────────────────────────────── */
+#sidebar{
+  width:var(--sidebar-w);min-width:var(--sidebar-w);
+  background:var(--bg2);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  position:sticky;top:0;height:100vh;overflow-y:auto;z-index:100;
+  transition:transform .25s ease;
+  scrollbar-width:thin;scrollbar-color:var(--border) transparent;
+}
+#sidebar::-webkit-scrollbar{width:4px}
+#sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.sb-header{padding:18px 16px 14px;border-bottom:1px solid var(--border);flex-shrink:0}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-badge{background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0}
+.logo-text .t1{font-size:13px;font-weight:700}
+.logo-text .t2{font-size:10px;color:var(--text3);font-family:var(--mono)}
+.sb-search{position:relative;margin:10px 12px 4px}
+.sb-search input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:7px 10px 7px 32px;color:var(--text);font-family:var(--font);font-size:12px;outline:none;transition:border-color .15s}
+.sb-search input:focus{border-color:var(--accent)}
+.sb-search i{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:14px;pointer-events:none}
+.nav-section{padding:4px 0}
+.nav-label{padding:10px 16px 3px;font-size:9px;font-weight:600;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;font-family:var(--mono)}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 16px;cursor:pointer;transition:.15s;color:var(--text2);font-size:12.5px;font-weight:500;position:relative;user-select:none}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:rgba(79,110,247,.12);color:var(--accent)}
+.nav-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent);border-radius:0 3px 3px 0}
+.nav-item i:first-child{font-size:16px;width:18px;flex-shrink:0}
+.expand-icon{margin-left:auto;font-size:11px;transition:.2s;color:var(--text3)}
+.nav-item.open .expand-icon{transform:rotate(180deg)}
+.nav-sub{display:none;background:rgba(0,0,0,.15)}
+.nav-sub.open{display:block}
+.nav-sub .nav-item{font-size:12px;padding:7px 16px 7px 28px}
+.nav-sub .nav-item i:first-child{font-size:13px}
+
+/* ── TOPBAR ───────────────────────────────────────────── */
+#topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:90}
+.tb-left{display:flex;align-items:center;gap:10px}
+.menu-btn{display:none;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:6px 9px;color:var(--text2);font-size:16px;transition:.15s}
+.menu-btn:hover{color:var(--text)}
+.breadcrumb{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text3)}
+.breadcrumb i{font-size:12px}
+.breadcrumb .sep{color:var(--border2)}
+.breadcrumb .cur{color:var(--text);font-weight:600}
+.tb-right{display:flex;align-items:center;gap:9px}
+.date-chip{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:5px 10px;font-size:11px;font-family:var(--mono);color:var(--text2);display:flex;align-items:center;gap:5px}
+.date-chip i{font-size:12px}
+.exam-chip{padding:4px 9px;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:.5px}
+.ukpsc{background:rgba(79,110,247,.15);border:1px solid rgba(79,110,247,.3);color:#7c9af7}
+.uksssc{background:rgba(124,90,247,.15);border:1px solid rgba(124,90,247,.3);color:#a98af7}
+
+/* ── CONTENT ──────────────────────────────────────────── */
+#content{flex:1;overflow-y:auto;padding:22px 24px}
+
+/* ── TICKER ───────────────────────────────────────────── */
+.ticker-bar{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:9px 14px;margin-bottom:18px;display:flex;align-items:center;gap:10px;overflow:hidden}
+.ticker-lbl{font-size:9px;font-weight:700;letter-spacing:1.2px;color:var(--accent);background:rgba(79,110,247,.15);border:1px solid rgba(79,110,247,.2);border-radius:5px;padding:3px 8px;white-space:nowrap;font-family:var(--mono);flex-shrink:0}
+.ticker-wrap{overflow:hidden;flex:1}
+.ticker-track{display:flex;gap:28px;white-space:nowrap;animation:ticker 30s linear infinite}
+.ticker-track:hover{animation-play-state:paused}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.tick-item{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;color:var(--text2);flex-shrink:0}
+.tick-item i{font-size:12px;color:var(--accent)}
+
+/* ── WELCOME BANNER ───────────────────────────────────── */
+.banner{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:20px 24px;margin-bottom:22px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden}
+.banner::before{content:'';position:absolute;right:-60px;top:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(79,110,247,.07),transparent 70%);pointer-events:none}
+.banner h1{font-size:21px;font-weight:700}
+.banner h1 span{color:var(--accent)}
+.banner p{font-size:12.5px;color:var(--text2);margin-top:4px}
+.banner-stats{display:flex;gap:10px;flex-shrink:0}
+.bstat{text-align:center;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:10px 16px}
+.bstat .n{font-size:20px;font-weight:700;font-family:var(--mono)}
+.bstat .l{font-size:9px;color:var(--text3);margin-top:2px;letter-spacing:.8px}
+.bstat.blue .n{color:var(--accent)}
+.bstat.purple .n{color:var(--accent2)}
+.bstat.green .n{color:var(--green)}
+
+/* ── SECTION HEADER ───────────────────────────────────── */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+.sec-title{display:flex;align-items:center;gap:10px}
+.sec-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.si-blue{background:rgba(79,110,247,.12);color:var(--accent)}
+.si-green{background:rgba(61,224,160,.12);color:var(--green)}
+.si-pink{background:rgba(247,90,124,.12);color:#f77ca8}
+.si-amber{background:rgba(247,185,61,.12);color:var(--amber)}
+.si-teal{background:rgba(61,213,224,.12);color:var(--teal)}
+.si-purple{background:rgba(124,90,247,.12);color:var(--accent2)}
+.si-uk{background:rgba(255,200,100,.12);color:#ffca64}
+.sec-title h2{font-size:16px;font-weight:600}
+.sec-title small{display:block;font-size:11px;color:var(--text3);margin-top:1px}
+
+/* ── PILL / CHIP FILTERS ──────────────────────────────── */
+.pills{display:flex;gap:6px;overflow-x:auto;padding-bottom:5px;margin-bottom:16px;scrollbar-width:none}
+.pills::-webkit-scrollbar{display:none}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:11.5px;font-weight:500;cursor:pointer;white-space:nowrap;transition:.15s;border:1px solid var(--border);color:var(--text2);background:var(--bg3);flex-shrink:0;user-select:none}
+.chip:hover,.chip.active{border-color:var(--accent);color:var(--accent);background:rgba(79,110,247,.1)}
+.chip i{font-size:13px}
+
+/* ── CARDS GRID ───────────────────────────────────────── */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(256px,1fr));gap:13px;margin-bottom:24px}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:16px;cursor:pointer;transition:.2s;position:relative;overflow:hidden;display:block;text-align:left}
+.card:hover{border-color:var(--border2);transform:translateY(-2px);background:var(--bg3)}
+.card-dot{position:absolute;top:13px;right:13px;width:7px;height:7px;border-radius:50%}
+.dot-high{background:var(--red);box-shadow:0 0 5px rgba(247,90,124,.4)}
+.dot-med{background:var(--amber)}
+.dot-low{background:var(--green)}
+.card-tag{display:inline-flex;align-items:center;gap:4px;padding:3px 7px;border-radius:5px;font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:9px}
+.card-title{font-size:13px;font-weight:600;line-height:1.55;color:var(--text);margin-bottom:9px}
+.card-meta{display:flex;align-items:center;gap:7px;font-size:10.5px;color:var(--text3)}
+.card-meta i{font-size:12px}
+.card-meta span{color:var(--border2)}
+/* tag colours */
+.t-defence{background:rgba(247,124,90,.15);color:#f77c5a;border:1px solid rgba(247,124,90,.25)}
+.t-tech{background:rgba(79,110,247,.15);color:#7c9af7;border:1px solid rgba(79,110,247,.25)}
+.t-space{background:rgba(124,90,247,.15);color:#a98af7;border:1px solid rgba(124,90,247,.25)}
+.t-sports{background:rgba(61,224,160,.15);color:#3de0a0;border:1px solid rgba(61,224,160,.25)}
+.t-awards{background:rgba(247,185,61,.15);color:#f7b93d;border:1px solid rgba(247,185,61,.25)}
+.t-governance{background:rgba(61,213,224,.15);color:#3dd5e0;border:1px solid rgba(61,213,224,.25)}
+.t-intl{background:rgba(247,90,124,.15);color:#f77ca8;border:1px solid rgba(247,90,124,.25)}
+.t-uk{background:rgba(255,200,100,.15);color:#ffca64;border:1px solid rgba(255,200,100,.25)}
+.t-operations{background:rgba(200,100,255,.15);color:#c864ff;border:1px solid rgba(200,100,255,.25)}
+.t-rankings{background:rgba(100,200,255,.15);color:#64c8ff;border:1px solid rgba(100,200,255,.25)}
+.t-appointments{background:rgba(247,185,61,.15);color:#f7ca7c;border:1px solid rgba(247,185,61,.25)}
+.t-health{background:rgba(61,224,100,.15);color:#3de064;border:1px solid rgba(61,224,100,.25)}
+.t-summits{background:rgba(100,200,255,.15);color:#64c8ff;border:1px solid rgba(100,200,255,.25)}
+
+/* ── LOAD MORE ────────────────────────────────────────── */
+.load-more-row{display:flex;justify-content:center;margin-bottom:24px}
+.load-more-btn{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:9px 22px;color:var(--text2);font-size:12.5px;font-weight:500;transition:.15s;display:flex;align-items:center;gap:7px}
+.load-more-btn:hover{border-color:var(--border2);color:var(--text)}
+.load-more-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* ── ARTICLE MODAL ────────────────────────────────────── */
+#modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;align-items:flex-start;justify-content:center;padding:24px 16px;overflow-y:auto}
+#modal-overlay.open{display:flex}
+#modal{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);width:100%;max-width:720px;position:relative;animation:modalIn .2s ease}
+@keyframes modalIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.modal-head{padding:22px 24px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.modal-head-left .modal-tag{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:5px;font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px}
+.modal-head-left h2{font-size:18px;font-weight:700;line-height:1.4;color:var(--text)}
+.modal-meta{display:flex;align-items:center;gap:12px;margin-top:7px;font-size:11px;color:var(--text3)}
+.modal-meta i{font-size:13px}
+.modal-close{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:6px 9px;color:var(--text2);font-size:18px;flex-shrink:0;transition:.15s}
+.modal-close:hover{color:var(--text);border-color:var(--border2)}
+.modal-body{padding:22px 24px;max-height:70vh;overflow-y:auto}
+.modal-body::-webkit-scrollbar{width:4px}
+.modal-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+
+/* Rich text content rendering */
+.rich-content{font-size:13.5px;line-height:1.8;color:var(--text2)}
+.rich-content h2{font-size:16px;font-weight:700;color:var(--text);margin:18px 0 8px}
+.rich-content h3{font-size:14px;font-weight:600;color:var(--text);margin:14px 0 6px}
+.rich-content p{margin-bottom:12px}
+.rich-content strong{color:var(--text);font-weight:600}
+.rich-content em{font-style:italic;color:var(--text)}
+.rich-content ul,.rich-content ol{padding-left:18px;margin-bottom:12px}
+.rich-content li{margin-bottom:5px}
+.rich-content .highlight{background:rgba(79,110,247,.12);border:1px solid rgba(79,110,247,.2);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:10px 14px;margin:12px 0;font-size:12.5px}
+.rich-content .highlight strong{color:var(--accent)}
+.rich-content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:12.5px}
+.rich-content th{background:var(--bg3);color:var(--text2);font-size:10.5px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;padding:8px 12px;text-align:left;border-bottom:1px solid var(--border)}
+.rich-content td{padding:8px 12px;color:var(--text2);border-bottom:1px solid var(--border)}
+.rich-content tr:last-child td{border-bottom:none}
+.rich-content tr:hover td{background:var(--bg3)}
+
+/* ── UK HERO ──────────────────────────────────────────── */
+.uk-hero{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:18px 22px;margin-bottom:16px;display:flex;align-items:center;gap:16px;position:relative;overflow:hidden}
+.uk-hero::before{content:'';position:absolute;right:-40px;top:-40px;width:180px;height:180px;background:radial-gradient(circle,rgba(255,200,100,.06),transparent 70%)}
+.uk-emblem{width:54px;height:54px;border-radius:50%;background:rgba(255,200,100,.1);border:2px solid rgba(255,200,100,.3);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0}
+.uk-hero h2{font-size:17px;font-weight:700;color:#ffca64}
+.uk-hero p{font-size:12px;color:var(--text2);margin-top:3px}
+
+/* ── LOADING SKELETON ─────────────────────────────────── */
+.skeleton{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:16px}
+.skel-line{background:var(--bg3);border-radius:4px;margin-bottom:8px;animation:shimmer 1.5s infinite}
+@keyframes shimmer{0%{opacity:.5}50%{opacity:1}100%{opacity:.5}}
+.skel-tag{width:80px;height:18px;border-radius:10px}
+.skel-title-1{width:90%;height:14px}
+.skel-title-2{width:70%;height:14px}
+.skel-meta{width:50%;height:10px;margin-bottom:0}
+
+/* ── EMPTY STATE ──────────────────────────────────────── */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;color:var(--text3);text-align:center;grid-column:1/-1}
+.empty-state i{font-size:40px;margin-bottom:12px;opacity:.4}
+.empty-state p{font-size:13px}
+
+/* ── DIVIDER ──────────────────────────────────────────── */
+.divider{border:none;border-top:1px solid var(--border);margin:22px 0}
+
+/* ── RESPONSIVE ───────────────────────────────────────── */
+@media(max-width:900px){
+  #sidebar{position:fixed;left:0;top:0;transform:translateX(-100%)}
+  #sidebar.open{transform:translateX(0);box-shadow:4px 0 24px rgba(0,0,0,.6)}
+  .menu-btn{display:flex}
+  #content{padding:14px 16px}
+  .banner-stats{display:none}
+}
+@media(max-width:600px){
+  .cards-grid{grid-template-columns:1fr}
+  .tb-right .date-chip{display:none}
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- ══════════ SIDEBAR ══════════ -->
+  <nav id="sidebar">
+    <div class="sb-header">
+      <div class="logo">
+        <div class="logo-badge">CA</div>
+        <div class="logo-text">
+          <div class="t1">Current Affairs Hub</div>
+          <div class="t2">UKPSC · UKSSSC</div>
+        </div>
+      </div>
+    </div>
+    <div class="sb-search">
+      <i class="ti ti-search"></i>
+      <input id="sideSearch" placeholder="Search articles…" oninput="handleSearch(this.value)"/>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Overview</div>
+      <div class="nav-item active" id="nav-home" onclick="loadSection('all','All Articles','ti-layout-dashboard','home')">
+        <i class="ti ti-layout-dashboard"></i> Dashboard
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">National Affairs</div>
+      <div class="nav-item" onclick="toggleSub('sub-national',this)">
+        <i class="ti ti-flag"></i> National <i class="ti ti-chevron-down expand-icon"></i>
+      </div>
+      <div class="nav-sub" id="sub-national">
+        <div class="nav-item" onclick="loadSection('defence','Defence','ti-shield')"><i class="ti ti-shield"></i> Defence</div>
+        <div class="nav-item" onclick="loadSection('tech','Technology','ti-cpu')"><i class="ti ti-cpu"></i> Technology</div>
+        <div class="nav-item" onclick="loadSection('space','Space','ti-rocket')"><i class="ti ti-rocket"></i> Space</div>
+        <div class="nav-item" onclick="loadSection('appointments','Appointments','ti-user-star')"><i class="ti ti-user-star"></i> Appointments</div>
+        <div class="nav-item" onclick="toggleSub('sub-sports',this)">
+          <i class="ti ti-trophy"></i> Sports <i class="ti ti-chevron-down expand-icon"></i>
+        </div>
+        <div class="nav-sub" id="sub-sports">
+          <div class="nav-item" onclick="loadSection('cricket','Cricket','ti-cricket')"><i class="ti ti-cricket"></i> Cricket</div>
+          <div class="nav-item" onclick="loadSection('chess','Chess','ti-chess')"><i class="ti ti-chess"></i> Chess</div>
+          <div class="nav-item" onclick="loadSection('badminton','Badminton','ti-ripple')"><i class="ti ti-ripple"></i> Badminton</div>
+          <div class="nav-item" onclick="loadSection('tennis','Tennis','ti-ball-tennis')"><i class="ti ti-ball-tennis"></i> Tennis</div>
+          <div class="nav-item" onclick="loadSection('football','Football','ti-ball-football')"><i class="ti ti-ball-football"></i> Football</div>
+          <div class="nav-item" onclick="loadSection('wrestling','Wrestling','ti-shield-half')"><i class="ti ti-shield-half"></i> Wrestling</div>
+          <div class="nav-item" onclick="loadSection('hockey','Hockey','ti-snowflake')"><i class="ti ti-snowflake"></i> Hockey</div>
+          <div class="nav-item" onclick="loadSection('athletics','Athletics','ti-run')"><i class="ti ti-run"></i> Athletics</div>
+          <div class="nav-item" onclick="loadSection('boxing','Boxing','ti-boxing')"><i class="ti ti-boxing"></i> Boxing</div>
+          <div class="nav-item" onclick="loadSection('shooting','Shooting','ti-target')"><i class="ti ti-target"></i> Shooting</div>
+          <div class="nav-item" onclick="loadSection('sports-others','Other Sports','ti-dots')"><i class="ti ti-dots"></i> Others</div>
+        </div>
+        <div class="nav-item" onclick="loadSection('governance','Governance','ti-building-bank')"><i class="ti ti-building-bank"></i> Governance</div>
+        <div class="nav-item" onclick="loadSection('awards','Awards','ti-award')"><i class="ti ti-award"></i> Awards</div>
+        <div class="nav-item" onclick="loadSection('operations','Operations','ti-crosshair')"><i class="ti ti-crosshair"></i> Operations</div>
+        <div class="nav-item" onclick="loadSection('rankings','Rankings','ti-chart-bar')"><i class="ti ti-chart-bar"></i> Rankings</div>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">International</div>
+      <div class="nav-item" onclick="toggleSub('sub-intl',this)">
+        <i class="ti ti-world"></i> International <i class="ti ti-chevron-down expand-icon"></i>
+      </div>
+      <div class="nav-sub" id="sub-intl">
+        <div class="nav-item" onclick="loadSection('intl-tech','Intl. Technology','ti-cpu')"><i class="ti ti-cpu"></i> Tech</div>
+        <div class="nav-item" onclick="loadSection('intl-space','Intl. Space','ti-satellite')"><i class="ti ti-satellite"></i> Space &amp; Tech</div>
+        <div class="nav-item" onclick="loadSection('intl-sports','Intl. Sports','ti-trophy')"><i class="ti ti-trophy"></i> Sports</div>
+        <div class="nav-item" onclick="loadSection('intl-summits','Summits','ti-users')"><i class="ti ti-users"></i> Summits</div>
+        <div class="nav-item" onclick="loadSection('intl-rankings','Intl. Rankings','ti-list-numbers')"><i class="ti ti-list-numbers"></i> Rankings</div>
+        <div class="nav-item" onclick="loadSection('intl-health','Health','ti-stethoscope')"><i class="ti ti-stethoscope"></i> Health</div>
+        <div class="nav-item" onclick="loadSection('intl-operations','Intl. Operations','ti-crosshair')"><i class="ti ti-crosshair"></i> Operations</div>
+        <div class="nav-item" onclick="loadSection('intl-awards','Intl. Awards','ti-award')"><i class="ti ti-award"></i> Awards</div>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">State</div>
+      <div class="nav-item" onclick="loadSection('uttarakhand','Uttarakhand','ti-mountain')">
+        <i class="ti ti-mountain"></i> Uttarakhand
+      </div>
+    </div>
+  </nav>
+
+  <!-- ══════════ MAIN ══════════ -->
+  <div id="main">
+    <div id="topbar">
+      <div class="tb-left">
+        <button class="menu-btn" onclick="toggleSidebar()"><i class="ti ti-menu-2"></i></button>
+        <div class="breadcrumb">
+          <i class="ti ti-home"></i>
+          <span class="sep">/</span>
+          <span class="cur" id="bc-cur">Dashboard</span>
+        </div>
+      </div>
+      <div class="tb-right">
+        <div class="date-chip"><i class="ti ti-calendar"></i><span id="cur-date"></span></div>
+        <span class="exam-chip ukpsc">UKPSC</span>
+        <span class="exam-chip uksssc">UKSSSC</span>
+      </div>
+    </div>
+
+    <div id="content">
+      <!-- ticker -->
+      <div class="ticker-bar">
+        <span class="ticker-lbl">LIVE</span>
+        <div class="ticker-wrap">
+          <div class="ticker-track" id="ticker">
+            <span class="tick-item"><i class="ti ti-rocket"></i>Operation Sindoor — India strikes 9 terror camps across LoC · May 2025</span>
+            <span class="tick-item"><i class="ti ti-chess"></i>D Gukesh becomes youngest-ever World Chess Champion · Dec 2024</span>
+            <span class="tick-item"><i class="ti ti-mountain"></i>Uttarakhand first state to implement UCC · Jan 2025</span>
+            <span class="tick-item"><i class="ti ti-trophy"></i>India wins T20 World Cup 2024 · beats South Africa in final</span>
+            <span class="tick-item"><i class="ti ti-award"></i>Padma Awards 2025 · 7 Vibhushan · 19 Bhushan · 113 Shri</span>
+            <span class="tick-item"><i class="ti ti-shield"></i>BNS, BNSS & BSA replace IPC, CrPC, Evidence Act · Jul 2024</span>
+            <span class="tick-item"><i class="ti ti-rocket"></i>Operation Sindoor — India strikes 9 terror camps across LoC · May 2025</span>
+            <span class="tick-item"><i class="ti ti-chess"></i>D Gukesh becomes youngest-ever World Chess Champion · Dec 2024</span>
+            <span class="tick-item"><i class="ti ti-mountain"></i>Uttarakhand first state to implement UCC · Jan 2025</span>
+            <span class="tick-item"><i class="ti ti-trophy"></i>India wins T20 World Cup 2024 · beats South Africa in final</span>
+            <span class="tick-item"><i class="ti ti-award"></i>Padma Awards 2025 · 7 Vibhushan · 19 Bhushan · 113 Shri</span>
+            <span class="tick-item"><i class="ti ti-shield"></i>BNS, BNSS & BSA replace IPC, CrPC, Evidence Act · Jul 2024</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- banner -->
+      <div class="banner">
+        <div>
+          <h1>Current Affairs Portal <span>2025</span></h1>
+          <p>UKPSC &amp; UKSSSC · National · International · Uttarakhand</p>
+        </div>
+        <div class="banner-stats">
+          <div class="bstat blue"><div class="n" id="stat-total">—</div><div class="l">ARTICLES</div></div>
+          <div class="bstat purple"><div class="n">18</div><div class="l">SECTIONS</div></div>
+          <div class="bstat green"><div class="n">3</div><div class="l">CATEGORIES</div></div>
+        </div>
+      </div>
+
+      <!-- dynamic section rendered here -->
+      <div id="section-root"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ ARTICLE MODAL ══════════ -->
+<div id="modal-overlay" onclick="closeModalOnOverlay(event)">
+  <div id="modal">
+    <div class="modal-head">
+      <div class="modal-head-left">
+        <div class="modal-tag" id="m-tag"></div>
+        <h2 id="m-title">Loading…</h2>
+        <div class="modal-meta">
+          <i class="ti ti-calendar"></i><span id="m-date"></span>
+          <i class="ti ti-tag"></i><span id="m-cat"></span>
+          <i class="ti ti-flame" id="m-imp-icon"></i><span id="m-imp"></span>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body" id="m-body">
+      <div style="text-align:center;padding:32px;color:var(--text3)"><i class="ti ti-loader" style="font-size:28px"></i></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ FIREBASE + APP SCRIPT ══════════ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+import {
+  getFirestore, collection, query, where, orderBy,
+  limit, startAfter, getDocs, getDoc, doc, getCountFromServer
+} from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+/* ── Firebase init ─────────────────────────────── */
+const app = initializeApp({
+  apiKey:"AIzaSyD-U-2tLzpoG1sWuWpsE8TUt74zqAou9UI",
+  authDomain:"current-e1fcd.firebaseapp.com",
+  projectId:"current-e1fcd",
+  storageBucket:"current-e1fcd.firebasestorage.app",
+  messagingSenderId:"1027178531815",
+  appId:"1:1027178531815:web:154a3e3c10c21970edcb42",
+  measurementId:"G-6608QRNT9N"
+});
+const db = getFirestore(app);
+
+/* ── Constants ─────────────────────────────────── */
+const PAGE_SIZE = 12;  // cards per load — keeps reads low
+const ARTICLES  = "articles";
+
+/* ── State ─────────────────────────────────────── */
+let currentCategory = "all";
+let lastDoc         = null;
+let isLoading       = false;
+let hasMore         = true;
+let searchTimer     = null;
+
+/* ── Date ──────────────────────────────────────── */
+document.getElementById("cur-date").textContent =
+  new Date().toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"});
+
+/* ── Sidebar helpers ────────────────────────────── */
+window.toggleSidebar = () => document.getElementById("sidebar").classList.toggle("open");
+document.addEventListener("click", e => {
+  const sb = document.getElementById("sidebar");
+  if(sb.classList.contains("open") &&
+     !sb.contains(e.target) &&
+     !e.target.closest(".menu-btn")) sb.classList.remove("open");
+});
+
+window.toggleSub = (id, el) => {
+  const sub = document.getElementById(id);
+  const open = sub.classList.toggle("open");
+  el.classList.toggle("open", open);
+};
+
+/* ── Tag colour map ─────────────────────────────── */
+const TAG_CLASS = {
+  defence:"t-defence", tech:"t-tech", space:"t-space", sports:"t-sports",
+  cricket:"t-sports", chess:"t-sports", badminton:"t-sports", tennis:"t-sports",
+  football:"t-sports", wrestling:"t-sports", hockey:"t-sports",
+  athletics:"t-sports", boxing:"t-sports", shooting:"t-sports", "sports-others":"t-sports",
+  governance:"t-governance", awards:"t-awards", operations:"t-operations",
+  rankings:"t-rankings", appointments:"t-appointments",
+  "intl-tech":"t-intl", "intl-space":"t-space", "intl-sports":"t-sports",
+  "intl-summits":"t-summits", "intl-rankings":"t-rankings",
+  "intl-health":"t-health", "intl-operations":"t-operations", "intl-awards":"t-awards",
+  uttarakhand:"t-uk"
+};
+
+/* ── Section icon map ───────────────────────────── */
+const SI = {
+  all:"si-blue", defence:"si-blue", tech:"si-blue", space:"si-purple",
+  sports:"si-green", cricket:"si-green", chess:"si-amber", badminton:"si-green",
+  tennis:"si-green", football:"si-green", wrestling:"si-green", hockey:"si-teal",
+  athletics:"si-green", boxing:"si-green", shooting:"si-green", "sports-others":"si-green",
+  governance:"si-teal", awards:"si-amber", operations:"si-purple", rankings:"si-blue",
+  appointments:"si-amber", "intl-tech":"si-blue", "intl-space":"si-purple",
+  "intl-sports":"si-green", "intl-summits":"si-pink", "intl-rankings":"si-blue",
+  "intl-health":"si-teal", "intl-operations":"si-purple", "intl-awards":"si-amber",
+  uttarakhand:"si-uk"
+};
+
+/* ── Load total count (cheap — single aggregation read) ── */
+async function loadTotalCount() {
+  try {
+    const snap = await getCountFromServer(collection(db, ARTICLES));
+    document.getElementById("stat-total").textContent = snap.data().count;
+  } catch(e) { document.getElementById("stat-total").textContent = "—"; }
+}
+loadTotalCount();
+
+/* ── Build query ────────────────────────────────── */
+function buildQuery(cat, afterDoc = null) {
+  let q;
+  if (cat === "all") {
+    q = query(collection(db, ARTICLES),
+      orderBy("date", "desc"), limit(PAGE_SIZE));
+  } else {
+    q = query(collection(db, ARTICLES),
+      where("category", "==", cat),
+      orderBy("date", "desc"), limit(PAGE_SIZE));
+  }
+  if (afterDoc) q = query(collection(db, ARTICLES),
+    ...(cat === "all"
+      ? [orderBy("date","desc")]
+      : [where("category","==",cat), orderBy("date","desc")]),
+    startAfter(afterDoc), limit(PAGE_SIZE));
+  return q;
+}
+
+/* ── Render skeleton cards ──────────────────────── */
+function renderSkeletons(n=6) {
+  return Array(n).fill(0).map(() => `
+    <div class="skeleton">
+      <div class="skel-line skel-tag"></div>
+      <div class="skel-line skel-title-1" style="margin-top:12px"></div>
+      <div class="skel-line skel-title-2"></div>
+      <div class="skel-line skel-meta" style="margin-top:10px"></div>
+    </div>`).join("");
+}
+
+/* ── Render one card ────────────────────────────── */
+function renderCard(docSnap) {
+  const d = docSnap.data();
+  const tagCls = TAG_CLASS[d.category] || "t-tech";
+  const dotCls = d.importance === "high" ? "dot-high" : d.importance === "medium" ? "dot-med" : "dot-low";
+  const dateStr = d.date?.toDate
+    ? d.date.toDate().toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"})
+    : d.date || "";
+  return `
+    <button class="card" onclick="openArticle('${docSnap.id}')">
+      <div class="card-dot ${dotCls}"></div>
+      <span class="card-tag ${tagCls}"><i class="ti ti-tag"></i>${(d.category||"").toUpperCase()}</span>
+      <div class="card-title">${escHtml(d.title||"Untitled")}</div>
+      <div class="card-meta">
+        <i class="ti ti-calendar"></i>${dateStr}
+        <span>·</span>
+        <i class="ti ti-flame"></i>${d.importance||"—"}
+      </div>
+    </button>`;
+}
+
+/* ── Section header HTML ────────────────────────── */
+function sectionHeader(label, icon, siClass) {
+  return `
+    <div class="sec-hdr">
+      <div class="sec-title">
+        <div class="sec-icon ${siClass}"><i class="ti ${icon}"></i></div>
+        <div><h2>${label}</h2><small>Click any card to read full content</small></div>
+      </div>
+    </div>`;
+}
+
+/* ── Load section ───────────────────────────────── */
+window.loadSection = async function(cat, label, icon, id="") {
+  if (isLoading) return;
+  currentCategory = cat;
+  lastDoc = null;
+  hasMore = true;
+
+  // Update active nav
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+  if (id === "home") document.getElementById("nav-home")?.classList.add("active");
+
+  // Breadcrumb
+  document.getElementById("bc-cur").textContent = label || cat;
+  // Close sidebar on mobile
+  document.getElementById("sidebar").classList.remove("open");
+
+  const root = document.getElementById("section-root");
+  const siClass = SI[cat] || "si-blue";
+
+  // UK section gets the special hero header
+  if (cat === "uttarakhand") {
+    root.innerHTML = `
+      <div class="uk-hero">
+        <div class="uk-emblem">🏔️</div>
+        <div>
+          <h2>Uttarakhand Current Affairs</h2>
+          <p>State-specific coverage · Governance · Schemes · Geography · Economy · Culture</p>
+        </div>
+      </div>
+      <div class="cards-grid" id="cards-container">${renderSkeletons()}</div>
+      <div class="load-more-row"><button class="load-more-btn" id="load-more-btn" onclick="loadMore()" disabled><i class="ti ti-loader"></i> Loading…</button></div>`;
+  } else {
+    root.innerHTML = `
+      ${sectionHeader(label||cat, icon||"ti-tag", siClass)}
+      <div class="cards-grid" id="cards-container">${renderSkeletons()}</div>
+      <div class="load-more-row"><button class="load-more-btn" id="load-more-btn" onclick="loadMore()" disabled><i class="ti ti-loader"></i> Loading…</button></div>`;
+  }
+
+  await fetchCards(true);
+};
+
+/* ── Fetch cards from Firestore ─────────────────── */
+async function fetchCards(fresh = false) {
+  if (isLoading || (!hasMore && !fresh)) return;
+  isLoading = true;
+
+  const btn = document.getElementById("load-more-btn");
+  if (btn) { btn.disabled = true; btn.innerHTML = `<i class="ti ti-loader"></i> Loading…`; }
+
+  try {
+    const q = buildQuery(currentCategory, fresh ? null : lastDoc);
+    const snap = await getDocs(q);
+
+    const container = document.getElementById("cards-container");
+    if (!container) { isLoading = false; return; }
+
+    if (fresh) container.innerHTML = "";
+
+    if (snap.empty && fresh) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <i class="ti ti-inbox"></i>
+          <p>No articles found in this section yet.<br>Add content from the Admin Panel.</p>
+        </div>`;
+      if (btn) btn.style.display = "none";
+      isLoading = false; return;
+    }
+
+    snap.docs.forEach(d => container.insertAdjacentHTML("beforeend", renderCard(d)));
+
+    lastDoc = snap.docs[snap.docs.length - 1];
+    hasMore = snap.docs.length === PAGE_SIZE;
+
+    if (btn) {
+      btn.style.display = hasMore ? "" : "none";
+      if (hasMore) { btn.disabled = false; btn.innerHTML = `<i class="ti ti-refresh"></i> Load more`; }
+    }
+  } catch(err) {
+    console.error(err);
+    const container = document.getElementById("cards-container");
+    if (container && fresh) container.innerHTML = `
+      <div class="empty-state"><i class="ti ti-wifi-off"></i><p>Failed to load. Check your connection.</p></div>`;
+  }
+  isLoading = false;
+}
+
+window.loadMore = () => fetchCards(false);
+
+/* ── Open article modal ─────────────────────────── */
+window.openArticle = async function(id) {
+  const overlay = document.getElementById("modal-overlay");
+  overlay.classList.add("open");
+  document.getElementById("m-title").textContent = "Loading…";
+  document.getElementById("m-body").innerHTML = `<div style="text-align:center;padding:32px;color:var(--text3)"><i class="ti ti-loader" style="font-size:28px"></i></div>`;
+  document.body.style.overflow = "hidden";
+
+  try {
+    const snap = await getDoc(doc(db, ARTICLES, id));
+    if (!snap.exists()) { document.getElementById("m-title").textContent = "Article not found."; return; }
+    const d = snap.data();
+    const tagCls = TAG_CLASS[d.category] || "t-tech";
+    const dateStr = d.date?.toDate
+      ? d.date.toDate().toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"})
+      : d.date || "";
+
+    document.getElementById("m-tag").className = `modal-tag ${tagCls}`;
+    document.getElementById("m-tag").innerHTML = `<i class="ti ti-tag"></i> ${(d.category||"").toUpperCase()}`;
+    document.getElementById("m-title").textContent = d.title || "Untitled";
+    document.getElementById("m-date").textContent = dateStr;
+    document.getElementById("m-cat").textContent = d.category || "";
+    document.getElementById("m-imp").textContent = d.importance || "";
+
+    // Render rich content from stored blocks
+    document.getElementById("m-body").innerHTML = `<div class="rich-content">${renderRichContent(d.content || [])}</div>`;
+  } catch(err) {
+    document.getElementById("m-title").textContent = "Error loading article.";
+    console.error(err);
+  }
+};
+
+window.closeModal = () => {
+  document.getElementById("modal-overlay").classList.remove("open");
+  document.body.style.overflow = "";
+};
+window.closeModalOnOverlay = e => { if(e.target === document.getElementById("modal-overlay")) closeModal(); };
+document.addEventListener("keydown", e => { if(e.key === "Escape") closeModal(); });
+
+/* ── Rich content renderer ──────────────────────── */
+// Content is stored as an array of blocks: { type, text/items/rows/headers }
+function renderRichContent(blocks) {
+  if (!blocks || !Array.isArray(blocks)) return "<p>No content available.</p>";
+  return blocks.map(b => {
+    switch(b.type) {
+      case "h2":        return `<h2>${escHtml(b.text)}</h2>`;
+      case "h3":        return `<h3>${escHtml(b.text)}</h3>`;
+      case "para":      return `<p>${renderInline(b.text)}</p>`;
+      case "highlight": return `<div class="highlight"><p>${renderInline(b.text)}</p></div>`;
+      case "ul":        return `<ul>${(b.items||[]).map(i=>`<li>${renderInline(i)}</li>`).join("")}</ul>`;
+      case "ol":        return `<ol>${(b.items||[]).map(i=>`<li>${renderInline(i)}</li>`).join("")}</ol>`;
+      case "table":
+        const hdr = (b.headers||[]).map(h=>`<th>${escHtml(h)}</th>`).join("");
+        const rows = (b.rows||[]).map(r=>`<tr>${r.map(c=>`<td>${escHtml(c)}</td>`).join("")}</tr>`).join("");
+        return `<table><thead><tr>${hdr}</tr></thead><tbody>${rows}</tbody></table>`;
+      default: return "";
+    }
+  }).join("");
+}
+
+// Inline markup: **bold** and *italic*
+function renderInline(txt) {
+  if (!txt) return "";
+  return escHtml(txt)
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\*(.+?)\*/g, "<em>$1</em>");
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+/* ── Search ─────────────────────────────────────── */
+window.handleSearch = function(val) {
+  clearTimeout(searchTimer);
+  if (!val.trim()) { loadSection("all","All Articles","ti-layout-dashboard","home"); return; }
+  searchTimer = setTimeout(() => doSearch(val.trim()), 400);
+};
+
+async function doSearch(q) {
+  // Client-side search on the current page's cards
+  // For full-text search, upgrade to Algolia / Typesense
+  const lower = q.toLowerCase();
+  document.querySelectorAll(".card").forEach(c => {
+    c.style.display = c.textContent.toLowerCase().includes(lower) ? "" : "none";
+  });
+}
+
+/* ── Auto-load dashboard on start ───────────────── */
+loadSection("all","All Articles","ti-layout-dashboard","home");
+</script>
+</body>
+</html>
