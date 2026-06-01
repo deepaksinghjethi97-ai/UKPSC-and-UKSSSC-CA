@@ -215,22 +215,47 @@ button{font-family:var(--font);cursor:pointer}
 
 /* Rich text content rendering */
 .rich-content{line-height:1.85;color:var(--text)}
+.rich-content h1{font-size:1.4em;font-weight:700;color:var(--text);margin:24px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--border2)}
+.rich-content h1:first-child{margin-top:0}
 .rich-content h2{font-size:1.2em;font-weight:700;color:var(--text);margin:24px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
 .rich-content h2:first-child{margin-top:0}
 .rich-content h3{font-size:1.05em;font-weight:600;color:var(--accent);margin:18px 0 8px}
+.rich-content h4{font-size:.95em;font-weight:600;color:var(--teal);margin:14px 0 6px}
 .rich-content p{margin-bottom:14px;color:var(--text);line-height:1.85}
 .rich-content strong{color:#fff;font-weight:700}
 .rich-content em{font-style:italic;color:var(--text2)}
 .rich-content ul,.rich-content ol{padding-left:22px;margin-bottom:14px}
 .rich-content li{margin-bottom:7px;color:var(--text);line-height:1.7}
-.rich-content .highlight{background:rgba(79,110,247,.1);border:1px solid rgba(79,110,247,.25);border-left:4px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin:16px 0;line-height:1.75}
-.rich-content .highlight p{margin-bottom:0;color:var(--text)}
-.rich-content .highlight strong{color:var(--accent)}
+.rich-content .highlight,.rich-content blockquote{background:rgba(79,110,247,.08);border:none;border-left:4px solid var(--accent);border-radius:0 10px 10px 0;padding:14px 18px;margin:16px 0;line-height:1.75}
+.rich-content .highlight p,.rich-content blockquote p{margin-bottom:0;color:var(--text)}
+.rich-content .highlight strong,.rich-content blockquote strong{color:var(--accent)}
+.rich-content .highlight,.rich-content blockquote{font-style:normal}
+.rich-content hr{border:none;border-top:1px solid var(--border2);margin:20px 0}
+.rich-content pre{background:var(--bg4);border:1px solid var(--border);border-radius:8px;padding:14px 16px;font-family:'JetBrains Mono',monospace;font-size:.85em;color:var(--green);overflow-x:auto;margin:10px 0;white-space:pre-wrap}
 .rich-content table{width:100%;border-collapse:collapse;margin:16px 0;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
 .rich-content th{background:var(--bg3);color:var(--text);font-size:.8em;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:11px 14px;text-align:left;border-bottom:2px solid var(--border2)}
 .rich-content td{padding:10px 14px;color:var(--text);border-bottom:1px solid var(--border)}
 .rich-content tr:last-child td{border-bottom:none}
 .rich-content tr:hover td{background:var(--bg3)}
+.rich-content h1{font-size:22px;font-weight:700;color:var(--text);margin:24px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--border2)}
+.rich-content h1:first-child{margin-top:0}
+.rich-content h4{font-size:13px;font-weight:600;color:var(--teal);margin:13px 0 6px}
+.rich-content u{text-decoration:underline;text-decoration-color:var(--amber)}
+.rich-content s{text-decoration:line-through;color:var(--text3)}
+.rich-content code{background:var(--bg4);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-family:var(--mono);font-size:.87em;color:var(--teal)}
+.rich-content pre{background:var(--bg4);border:1px solid var(--border);border-radius:8px;padding:14px 16px;font-family:var(--mono);font-size:.85em;color:var(--green);overflow-x:auto;margin:10px 0;white-space:pre-wrap}
+.rich-content hr{border:none;border-top:1px solid var(--border2);margin:20px 0}
+.rich-content ul[data-list="check"]{list-style:none;padding-left:4px}
+.rich-content ul[data-list="check"] li::before{content:"☐ ";color:var(--accent)}
+.rich-content ul[data-list="check"] li.checked::before{content:"☑ ";color:var(--green)}
+.rich-content ul[data-list="arrow"]{list-style:none;padding-left:4px}
+.rich-content ul[data-list="arrow"] li::before{content:"→ ";color:var(--accent)}
+.rich-content ul[data-list="star"]{list-style:none;padding-left:4px}
+.rich-content ul[data-list="star"] li::before{content:"★ ";color:var(--amber)}
+.rich-content .img-wrap{text-align:center;margin:14px 0}
+.rich-content .img-wrap figcaption{font-size:11px;color:var(--text3);margin-top:5px}
+.rich-content a{color:var(--accent);text-decoration:underline;text-decoration-color:rgba(79,110,247,.4)}
+.rich-content a:hover{color:#7c9af7}
 
 /* ── PRINT STYLES ─────────────────────────────────────── */
 @media print{
@@ -961,7 +986,7 @@ window.openArticle = async function(id) {
     }
 
     // Render rich content
-    body.innerHTML = `<div class="rich-content">${renderRichContent(d.content || [])}</div>`;
+    body.innerHTML = `<div class="rich-content">${renderArticleContent(d)}</div>`;
 
     // Reading progress bar
     body.addEventListener("scroll", updateReadingProgress);
@@ -1071,32 +1096,70 @@ document.addEventListener("keydown", e => {
 });
 
 /* ── Rich content renderer ──────────────────────── */
+/* ── Rich content renderer (handles all block types from WYSIWYG editor) ── */
 function renderRichContent(blocks) {
   if (!blocks || !Array.isArray(blocks)) return "<p>No content available.</p>";
   return blocks.map(b => {
     switch(b.type) {
-      case "h2":        return `<h2>${escHtml(b.text)}</h2>`;
-      case "h3":        return `<h3>${escHtml(b.text)}</h3>`;
-      case "para":      return `<p>${renderInline(b.text)}</p>`;
-      case "highlight": return `<div class="highlight"><p>${renderInline(b.text)}</p></div>`;
-      case "ul":        return `<ul>${(b.items||[]).map(i=>`<li>${renderInline(i)}</li>`).join("")}</ul>`;
-      case "ol":        return `<ol>${(b.items||[]).map(i=>`<li>${renderInline(i)}</li>`).join("")}</ol>`;
+      case "h1": return `<h1>${b.html || escHtml(b.text||"")}</h1>`;
+      case "h2": return `<h2>${b.html || escHtml(b.text||"")}</h2>`;
+      case "h3": return `<h3>${b.html || escHtml(b.text||"")}</h3>`;
+      case "h4": return `<h4>${b.html || escHtml(b.text||"")}</h4>`;
+      case "para":      return `<p>${b.html || renderInline(b.text||"")}</p>`;
+      case "highlight": return `<blockquote>${b.html || renderInline(b.text||"")}</blockquote>`;
+      case "pre":       return `<pre>${b.html || escHtml(b.text||"")}</pre>`;
+      case "hr":        return `<hr/>`;
+      case "ul": {
+        const listType = b.listType || "disc";
+        const attr = listType !== "disc" ? ` data-list="${listType}"` : "";
+        const items = (b.items||[]).map(i => {
+          const html = typeof i === "string" ? renderInline(i) : (i.html || escHtml(i.text||String(i)));
+          const checked = typeof i === "object" && i.checked ? ` class="checked"` : "";
+          return `<li${checked}>${html}</li>`;
+        }).join("");
+        return `<ul${attr}>${items}</ul>`;
+      }
+      case "ol": {
+        const items = (b.items||[]).map(i => {
+          const html = typeof i === "string" ? renderInline(i) : (i.html || escHtml(i.text||String(i)));
+          return `<li>${html}</li>`;
+        }).join("");
+        return `<ol>${items}</ol>`;
+      }
       case "table": {
-        const hdr  = (b.headers||[]).map(h=>`<th>${escHtml(h)}</th>`).join("");
-        const rows = (b.rows||[]).map(r=>`<tr>${r.map(c=>`<td>${escHtml(c)}</td>`).join("")}</tr>`).join("");
+        const hdr  = (b.headers||[]).map(h => `<th>${typeof h==="string"?escHtml(h):h}</th>`).join("");
+        const rows = (b.rows||[]).map(r =>
+          `<tr>${r.map(c => `<td>${typeof c==="string"?escHtml(c):c}</td>`).join("")}</tr>`
+        ).join("");
         return `<table><thead><tr>${hdr}</tr></thead><tbody>${rows}</tbody></table>`;
       }
-      case "image": return b.url ? `<div style="text-align:center;margin:16px 0"><img src="${escHtml(b.url)}" alt="${escHtml(b.alt||'')}" style="max-width:100%;border-radius:10px;border:1px solid var(--border)"/>${b.alt?`<p style="font-size:11px;color:var(--text3);margin-top:6px">${escHtml(b.alt)}</p>`:""}</div>` : "";
-      default: return "";
+      case "image": return b.url
+        ? `<div class="img-wrap"><img src="${escHtml(b.url)}" alt="${escHtml(b.alt||'')}"/>${b.alt?`<figcaption>${escHtml(b.alt)}</figcaption>`:""}</div>`
+        : "";
+      default:
+        // Fallback: if block has html field, render it directly (WYSIWYG raw output)
+        if (b.html) return b.html;
+        return "";
     }
   }).join("");
+}
+
+/* Also handle rawHTML field for articles saved with new WYSIWYG editor */
+function renderArticleContent(data) {
+  if (data.content && Array.isArray(data.content) && data.content.length) {
+    return renderRichContent(data.content);
+  }
+  if (data.rawHTML) return data.rawHTML; // Direct HTML from WYSIWYG
+  return "<p>No content available.</p>";
 }
 
 function renderInline(txt) {
   if (!txt) return "";
   return escHtml(txt)
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-    .replace(/\*(.+?)\*/g, "<em>$1</em>");
+    .replace(/\*(.+?)\*/g, "<em>$1</em>")
+    .replace(/~~(.+?)~~/g, "<s>$1</s>")
+    .replace(/`(.+?)`/g, "<code>$1</code>");
 }
 
 function escHtml(s) {
