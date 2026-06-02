@@ -309,22 +309,6 @@ button{font-family:var(--font);cursor:pointer}
 /* ── DIVIDER ──────────────────────────────────────────── */
 .divider{border:none;border-top:1px solid var(--border);margin:22px 0}
 
-/* ── DATE FILTER BAR ──────────────────────────────────── */
-.date-filter-bar{display:flex;align-items:center;flex-wrap:wrap;gap:10px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;margin-bottom:16px}
-.df-label{font-size:11px;font-weight:600;color:var(--text3);display:flex;align-items:center;gap:5px;letter-spacing:.3px;white-space:nowrap;font-family:var(--mono)}
-.df-label i{font-size:13px}
-.df-pills{display:flex;gap:5px;flex-wrap:wrap}
-.df-pill{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:500;color:var(--text2);cursor:pointer;transition:.15s;white-space:nowrap;font-family:var(--font)}
-.df-pill:hover{border-color:var(--border2);color:var(--text)}
-.df-pill.active{background:rgba(79,110,247,.12);border-color:rgba(79,110,247,.4);color:var(--accent)}
-.df-custom{display:flex;align-items:center;gap:6px;margin-left:auto}
-.df-custom input[type="date"]{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:4px 8px;color:var(--text2);font-size:11px;font-family:var(--font);outline:none;cursor:pointer;color-scheme:dark;transition:.15s}
-.df-custom input[type="date"]:focus{border-color:var(--accent);color:var(--text)}
-.df-to-label{font-size:11px;color:var(--text3)}
-.df-clear{background:none;border:none;color:var(--text3);font-size:14px;padding:2px 4px;border-radius:4px;transition:.15s;line-height:1}
-.df-clear:hover{color:var(--red)}
-@media(max-width:600px){.date-filter-bar{flex-direction:column;align-items:flex-start}.df-custom{margin-left:0;flex-wrap:wrap}}
-
 /* ── READING PROGRESS BAR ─────────────────────────────── */
 #read-progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0;z-index:300;transition:width .1s}
 
@@ -452,24 +436,11 @@ button{font-family:var(--font);cursor:pointer}
     </div>
 
     <div id="content">
-      <!-- ticker -->
-      <div class="ticker-bar">
+      <!-- ticker — populated dynamically from Firestore ticker_items -->
+      <div class="ticker-bar" id="ticker-bar" style="display:none">
         <span class="ticker-lbl">LIVE</span>
         <div class="ticker-wrap">
-          <div class="ticker-track" id="ticker">
-            <span class="tick-item"><i class="ti ti-rocket"></i>Operation Sindoor — India strikes 9 terror camps across LoC · May 2025</span>
-            <span class="tick-item"><i class="ti ti-chess"></i>D Gukesh becomes youngest-ever World Chess Champion · Dec 2024</span>
-            <span class="tick-item"><i class="ti ti-mountain"></i>Uttarakhand first state to implement UCC · Jan 2025</span>
-            <span class="tick-item"><i class="ti ti-trophy"></i>India wins T20 World Cup 2024 · beats South Africa in final</span>
-            <span class="tick-item"><i class="ti ti-award"></i>Padma Awards 2025 · 7 Vibhushan · 19 Bhushan · 113 Shri</span>
-            <span class="tick-item"><i class="ti ti-shield"></i>BNS, BNSS &amp; BSA replace IPC, CrPC, Evidence Act · Jul 2024</span>
-            <span class="tick-item"><i class="ti ti-rocket"></i>Operation Sindoor — India strikes 9 terror camps across LoC · May 2025</span>
-            <span class="tick-item"><i class="ti ti-chess"></i>D Gukesh becomes youngest-ever World Chess Champion · Dec 2024</span>
-            <span class="tick-item"><i class="ti ti-mountain"></i>Uttarakhand first state to implement UCC · Jan 2025</span>
-            <span class="tick-item"><i class="ti ti-trophy"></i>India wins T20 World Cup 2024 · beats South Africa in final</span>
-            <span class="tick-item"><i class="ti ti-award"></i>Padma Awards 2025 · 7 Vibhushan · 19 Bhushan · 113 Shri</span>
-            <span class="tick-item"><i class="ti ti-shield"></i>BNS, BNSS &amp; BSA replace IPC, CrPC, Evidence Act · Jul 2024</span>
-          </div>
+          <div class="ticker-track" id="ticker"></div>
         </div>
       </div>
 
@@ -544,7 +515,8 @@ button{font-family:var(--font);cursor:pointer}
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
 import {
   getFirestore, collection, query, where, orderBy,
-  limit, startAfter, getDocs, getDoc, doc, getCountFromServer, Timestamp
+  limit, startAfter, getDocs, getDoc, doc, getCountFromServer,
+  onSnapshot
 } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
 /* ── Firebase init ─────────────────────────────── */
@@ -569,13 +541,6 @@ let lastDoc         = null;
 let isLoading       = false;
 let hasMore         = true;
 let searchTimer     = null;
-
-// Date filter state
-let dateFilterFrom  = null; // JS Date or null
-let dateFilterTo    = null; // JS Date or null
-
-// Cache of all fetched docs for zero-cost search
-let allFetchedDocs  = [];
 
 // Modal navigation state
 let modalArticleIds  = [];   // ordered list of ids currently in view
@@ -696,16 +661,40 @@ async function loadTotalCount() {
 }
 loadTotalCount();
 
+/* ── Live Ticker — realtime from Firestore ──────── */
+(function initLiveTicker() {
+  const bar   = document.getElementById("ticker-bar");
+  const track = document.getElementById("ticker");
+  if (!bar || !track) return;
+  const q = query(collection(db, "ticker_items"), orderBy("createdAt", "asc"));
+  onSnapshot(q, snap => {
+    if (snap.empty) { bar.style.display = "none"; return; }
+    bar.style.display = "";
+    // Duplicate items so CSS seamless-loop animation always works
+    const items = snap.docs.map(d => {
+      const v = d.data();
+      const icon = escHtml(v.icon || "ti-star");
+      const text = escHtml(v.text || "");
+      return `<span class="tick-item"><i class="ti ${icon}"></i>${text}</span>`;
+    }).join("");
+    track.innerHTML = items + items;
+  }, err => console.warn("Ticker load error:", err));
+})();
+
 /* ── Build query ────────────────────────────────── */
 function buildQuery(cat, afterDoc = null) {
-  const constraints = [];
-  if (cat !== "all") constraints.push(where("category", "==", cat));
-  if (dateFilterFrom) constraints.push(where("date", ">=", Timestamp.fromDate(dateFilterFrom)));
-  if (dateFilterTo)   constraints.push(where("date", "<=", Timestamp.fromDate(dateFilterTo)));
-  constraints.push(orderBy("date", "desc"));
-  if (afterDoc) constraints.push(startAfter(afterDoc));
-  constraints.push(limit(PAGE_SIZE));
-  return query(collection(db, ARTICLES), ...constraints);
+  let q;
+  if (cat === "all") {
+    q = query(collection(db, ARTICLES), orderBy("date", "desc"), limit(PAGE_SIZE));
+  } else {
+    q = query(collection(db, ARTICLES), where("category", "==", cat), orderBy("date", "desc"), limit(PAGE_SIZE));
+  }
+  if (afterDoc) q = query(collection(db, ARTICLES),
+    ...(cat === "all"
+      ? [orderBy("date","desc")]
+      : [where("category","==",cat), orderBy("date","desc")]),
+    startAfter(afterDoc), limit(PAGE_SIZE));
+  return q;
 }
 
 /* ── Render skeleton cards ──────────────────────── */
@@ -765,22 +754,6 @@ function sectionHeader(label, icon, siClass) {
         <div class="sec-icon ${siClass}"><i class="ti ${icon}"></i></div>
         <div><h2>${label}</h2><small>Click any card to read full content</small></div>
       </div>
-    </div>
-    <div class="date-filter-bar" id="date-filter-bar">
-      <span class="df-label"><i class="ti ti-calendar-event"></i> Filter by date</span>
-      <div class="df-pills" id="df-pills">
-        <button class="df-pill active" data-range="all" onclick="applyDateFilter('all',this)">All Time</button>
-        <button class="df-pill" data-range="today" onclick="applyDateFilter('today',this)">Today</button>
-        <button class="df-pill" data-range="week" onclick="applyDateFilter('week',this)">This Week</button>
-        <button class="df-pill" data-range="month" onclick="applyDateFilter('month',this)">This Month</button>
-        <button class="df-pill" data-range="3month" onclick="applyDateFilter('3month',this)">Last 3 Months</button>
-      </div>
-      <div class="df-custom">
-        <input type="date" id="df-from" onchange="applyCustomDateFilter()" placeholder="From"/>
-        <span class="df-to-label">to</span>
-        <input type="date" id="df-to" onchange="applyCustomDateFilter()" placeholder="To"/>
-        <button class="df-clear" id="df-clear-btn" onclick="clearCustomDate()" style="display:none"><i class="ti ti-x"></i></button>
-      </div>
     </div>`;
 }
 
@@ -815,73 +788,6 @@ window.loadBookmarks = async function() {
   docs.forEach(d => container.insertAdjacentHTML("beforeend", renderCard(d)));
 };
 
-/* ── Date filter logic ───────────────────────────── */
-window.applyDateFilter = function(range, btn) {
-  // Clear custom inputs
-  const fromEl = document.getElementById("df-from");
-  const toEl   = document.getElementById("df-to");
-  const clearBtn = document.getElementById("df-clear-btn");
-  if (fromEl) fromEl.value = "";
-  if (toEl)   toEl.value   = "";
-  if (clearBtn) clearBtn.style.display = "none";
-
-  document.querySelectorAll(".df-pill").forEach(p => p.classList.remove("active"));
-  if (btn) btn.classList.add("active");
-
-  const now   = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-  if (range === "all") {
-    dateFilterFrom = null;
-    dateFilterTo   = null;
-  } else if (range === "today") {
-    dateFilterFrom = today;
-    dateFilterTo   = new Date(today.getTime() + 86400000 - 1);
-  } else if (range === "week") {
-    const day = today.getDay(); // 0=Sun
-    const monday = new Date(today); monday.setDate(today.getDate() - ((day + 6) % 7));
-    dateFilterFrom = monday;
-    dateFilterTo   = new Date(now.getTime() + 86400000);
-  } else if (range === "month") {
-    dateFilterFrom = new Date(now.getFullYear(), now.getMonth(), 1);
-    dateFilterTo   = new Date(now.getTime() + 86400000);
-  } else if (range === "3month") {
-    const d = new Date(now); d.setMonth(d.getMonth() - 3);
-    dateFilterFrom = d;
-    dateFilterTo   = new Date(now.getTime() + 86400000);
-  }
-  loadSection(currentCategory, null, null, "");
-};
-
-window.applyCustomDateFilter = function() {
-  const fromEl = document.getElementById("df-from");
-  const toEl   = document.getElementById("df-to");
-  if (!fromEl || !toEl) return;
-  const fromVal = fromEl.value;
-  const toVal   = toEl.value;
-  if (!fromVal && !toVal) return;
-  // Deactivate preset pills
-  document.querySelectorAll(".df-pill").forEach(p => p.classList.remove("active"));
-  const clearBtn = document.getElementById("df-clear-btn");
-  if (clearBtn) clearBtn.style.display = "";
-  dateFilterFrom = fromVal ? new Date(fromVal + "T00:00:00") : null;
-  dateFilterTo   = toVal   ? new Date(toVal   + "T23:59:59") : null;
-  loadSection(currentCategory, null, null, "");
-};
-
-window.clearCustomDate = function() {
-  const fromEl = document.getElementById("df-from");
-  const toEl   = document.getElementById("df-to");
-  if (fromEl) fromEl.value = "";
-  if (toEl)   toEl.value   = "";
-  const clearBtn = document.getElementById("df-clear-btn");
-  if (clearBtn) clearBtn.style.display = "none";
-  dateFilterFrom = null;
-  dateFilterTo   = null;
-  document.querySelectorAll(".df-pill").forEach((p,i) => p.classList.toggle("active", i===0));
-  loadSection(currentCategory, null, null, "");
-};
-
 /* ── Load section ───────────────────────────────── */
 window.loadSection = async function(cat, label, icon, id="") {
   if (isLoading) return;
@@ -889,8 +795,6 @@ window.loadSection = async function(cat, label, icon, id="") {
   lastDoc = null;
   hasMore = true;
   modalArticleIds = [];
-  // Reset date filter when navigating to a new section (but not when filter itself calls loadSection)
-  if (id !== "") { dateFilterFrom = null; dateFilterTo = null; }
 
   document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
   if (id === "home") {
@@ -990,7 +894,6 @@ async function fetchCards(fresh = false) {
     if (fresh) {
       container.innerHTML = "";
       modalArticleIds = [];
-      allFetchedDocs = [];
     }
 
     if (snap.empty && fresh) {
@@ -1003,11 +906,8 @@ async function fetchCards(fresh = false) {
       isLoading = false; return;
     }
 
-    // Collect IDs for modal navigation + cache docs for search
-    snap.docs.forEach(d => {
-      if (!modalArticleIds.includes(d.id)) modalArticleIds.push(d.id);
-      if (!allFetchedDocs.find(x => x.id === d.id)) allFetchedDocs.push(d);
-    });
+    // Collect IDs for modal navigation
+    snap.docs.forEach(d => { if (!modalArticleIds.includes(d.id)) modalArticleIds.push(d.id); });
 
     // Render top picks on first load of "all"
     if (fresh && currentCategory === "all") renderTopPicks(snap.docs);
@@ -1294,9 +1194,7 @@ window.handleSearch = function(val) {
 };
 
 async function doSearch(q) {
-  // Zero extra Firestore reads — filter the cards already fetched in the current view.
-  // If the user searches from the dashboard (all articles), we need at least one page
-  // loaded. We use the cached allFetchedDocs for filtering.
+  // Firestore range query for title prefix, plus client filter
   const lower = q.toLowerCase();
   document.getElementById("bc-cur").textContent = `Search: ${q}`;
   document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
@@ -1308,19 +1206,27 @@ async function doSearch(q) {
         <div><h2>Search Results</h2><small>Showing results for "${escHtml(q)}"</small></div>
       </div>
     </div>
-    <div class="cards-grid" id="cards-container"></div>`;
-  const container = document.getElementById("cards-container");
-  const matches = allFetchedDocs.filter(d => {
-    const data = d.data();
-    return (data.title||"").toLowerCase().includes(lower)
-        || (data.category||"").toLowerCase().includes(lower)
-        || (Array.isArray(data.tags) ? data.tags.join(" ") : data.tags||"").toLowerCase().includes(lower);
-  });
-  modalArticleIds = matches.map(d => d.id);
-  if (!matches.length) {
-    container.innerHTML = `<div class="empty-state"><i class="ti ti-search-off"></i><p>No results for "${escHtml(q)}" in loaded articles.<br><small style="opacity:.6">Try browsing a category first to load more articles.</small></p></div>`;
-  } else {
-    matches.forEach(d => container.insertAdjacentHTML("beforeend", renderCard(d)));
+    <div class="cards-grid" id="cards-container">${renderSkeletons()}</div>`;
+  try {
+    // Firestore doesn't support full-text search natively; fetch recent & filter client-side
+    // For production, integrate Algolia / Typesense
+    const snap = await getDocs(query(collection(db, ARTICLES), orderBy("date","desc"), limit(100)));
+    const container = document.getElementById("cards-container");
+    container.innerHTML = "";
+    const matches = snap.docs.filter(d => {
+      const data = d.data();
+      return (data.title||"").toLowerCase().includes(lower)
+          || (data.category||"").toLowerCase().includes(lower)
+          || (Array.isArray(data.tags) ? data.tags.join(" ") : data.tags||"").toLowerCase().includes(lower);
+    });
+    modalArticleIds = matches.map(d => d.id);
+    if (!matches.length) {
+      container.innerHTML = `<div class="empty-state"><i class="ti ti-search-off"></i><p>No articles found for "${escHtml(q)}"</p></div>`;
+    } else {
+      matches.forEach(d => container.insertAdjacentHTML("beforeend", renderCard(d)));
+    }
+  } catch(err) {
+    console.error("Search error:", err);
   }
 }
 
