@@ -1127,10 +1127,21 @@ function renderRichContent(blocks) {
         return `<ol>${items}</ol>`;
       }
       case "table": {
-        const hdr  = (b.headers||[]).map(h => `<th>${typeof h==="string"?escHtml(h):h}</th>`).join("");
-        const rows = (b.rows||[]).map(r =>
-          `<tr>${r.map(c => `<td>${typeof c==="string"?escHtml(c):c}</td>`).join("")}</tr>`
-        ).join("");
+        // Headers stored as innerHTML — render directly, never re-escape
+        const hdr = (b.headers||[]).map(h => `<th>${h||""}</th>`).join("");
+        const rows = (b.rows||[]).map(r => {
+          // Admin stores rows as {cells:"a||CELL||b"} (flat Firestore-safe format)
+          // Legacy format was a nested array — handle both
+          let cells;
+          if (r && typeof r === "object" && typeof r.cells === "string") {
+            cells = r.cells.split("||CELL||");
+          } else if (Array.isArray(r)) {
+            cells = r;
+          } else {
+            cells = [String(r||"")];
+          }
+          return `<tr>${cells.map(c => `<td>${c||""}</td>`).join("")}</tr>`;
+        }).join("");
         return `<table><thead><tr>${hdr}</tr></thead><tbody>${rows}</tbody></table>`;
       }
       case "image": return b.url
