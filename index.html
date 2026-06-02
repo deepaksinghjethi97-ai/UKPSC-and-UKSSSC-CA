@@ -515,8 +515,7 @@ button{font-family:var(--font);cursor:pointer}
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
 import {
   getFirestore, collection, query, where, orderBy,
-  limit, startAfter, getDocs, getDoc, doc, getCountFromServer,
-  onSnapshot
+  limit, startAfter, getDocs, getDoc, doc, getCountFromServer
 } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
 /* ── Firebase init ─────────────────────────────── */
@@ -666,19 +665,37 @@ loadTotalCount();
   const bar   = document.getElementById("ticker-bar");
   const track = document.getElementById("ticker");
   if (!bar || !track) return;
-  const q = query(collection(db, "ticker_items"), orderBy("createdAt", "asc"));
-  onSnapshot(q, snap => {
-    if (snap.empty) { bar.style.display = "none"; return; }
-    bar.style.display = "";
-    // Duplicate items so CSS seamless-loop animation always works
-    const items = snap.docs.map(d => {
-      const v = d.data();
-      const icon = escHtml(v.icon || "ti-star");
-      const text = escHtml(v.text || "");
-      return `<span class="tick-item"><i class="ti ${icon}"></i>${text}</span>`;
-    }).join("");
-    track.innerHTML = items + items;
-  }, err => console.warn("Ticker load error:", err));
+
+  async function fetchTicker() {
+    try {
+      // Simple getDocs — no orderBy so no index needed, no persistent listener so no auth needed
+      const snap = await getDocs(collection(db, "ticker_items"));
+      if (snap.empty) { bar.style.display = "none"; return; }
+      bar.style.display = "";
+      // Sort client-side by createdAt asc
+      const sorted = [...snap.docs].sort((a,b) => {
+        const ta = a.data().createdAt?.toMillis?.() ?? 0;
+        const tb = b.data().createdAt?.toMillis?.() ?? 0;
+        return ta - tb;
+      });
+      const items = sorted.map(d => {
+        const v = d.data();
+        const icon = escHtml(v.icon || "ti-star");
+        const text = escHtml(v.text || "");
+        return `<span class="tick-item"><i class="ti ${icon}"></i>${text}</span>`;
+      }).join("");
+      // Duplicate for seamless CSS scroll loop
+      track.innerHTML = items + items;
+    } catch(err) {
+      // Silently hide ticker if permissions not yet configured
+      console.warn("Ticker unavailable:", err.message);
+      bar.style.display = "none";
+    }
+  }
+
+  fetchTicker();
+  // Refresh every 60s so new items appear without page reload
+  setInterval(fetchTicker, 60000);
 })();
 
 /* ── Build query ────────────────────────────────── */
