@@ -221,7 +221,8 @@ button{font-family:var(--font);cursor:pointer}
 .rich-content h2:first-child{margin-top:0}
 .rich-content h3{font-size:1.05em;font-weight:600;color:var(--accent);margin:18px 0 8px}
 .rich-content h4{font-size:.95em;font-weight:600;color:var(--teal);margin:14px 0 6px}
-.rich-content p{margin-bottom:14px;color:var(--text);line-height:1.85}
+.rich-content p{margin-bottom:4px;color:var(--text);line-height:1.85}
+.rich-content p:last-child{margin-bottom:0}
 .rich-content strong{color:#fff;font-weight:700}
 .rich-content em{font-style:italic;color:var(--text2)}
 .rich-content ul,.rich-content ol{padding-left:22px;margin-bottom:14px}
@@ -1124,13 +1125,33 @@ document.addEventListener("keydown", e => {
 /* ── Rich content renderer (handles all block types from WYSIWYG editor) ── */
 function renderRichContent(blocks) {
   if (!blocks || !Array.isArray(blocks)) return "<p>No content available.</p>";
-  return blocks.map(b => {
+
+  // Merge consecutive "para" blocks into a single <p> joined by <br>
+  // This fixes the issue where the WYSIWYG editor splits each line into
+  // a separate para block, causing unwanted multi-line spacing in the modal.
+  const merged = [];
+  let i = 0;
+  while (i < blocks.length) {
+    if (blocks[i].type === "para") {
+      const paraLines = [];
+      while (i < blocks.length && blocks[i].type === "para") {
+        paraLines.push(blocks[i].html || renderInline(blocks[i].text||""));
+        i++;
+      }
+      merged.push({ type:"para", _merged: paraLines.join("<br>") });
+    } else {
+      merged.push(blocks[i]);
+      i++;
+    }
+  }
+
+  return merged.map(b => {
     switch(b.type) {
       case "h1": return `<h1>${b.html || escHtml(b.text||"")}</h1>`;
       case "h2": return `<h2>${b.html || escHtml(b.text||"")}</h2>`;
       case "h3": return `<h3>${b.html || escHtml(b.text||"")}</h3>`;
       case "h4": return `<h4>${b.html || escHtml(b.text||"")}</h4>`;
-      case "para":      return `<p>${b.html || renderInline(b.text||"")}</p>`;
+      case "para":      return `<p>${b._merged !== undefined ? b._merged : (b.html || renderInline(b.text||""))}</p>`;
       case "highlight": return `<blockquote>${b.html || renderInline(b.text||"")}</blockquote>`;
       case "pre":       return `<pre>${b.html || escHtml(b.text||"")}</pre>`;
       case "hr":        return `<hr/>`;
