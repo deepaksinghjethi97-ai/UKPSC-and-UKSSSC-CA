@@ -395,7 +395,8 @@ button{font-family:var(--font);cursor:pointer}
 .modal-chrome{
   display:flex;align-items:center;gap:8px;
   padding:8px 12px;border-bottom:1px solid var(--border);
-  flex-shrink:0;min-height:0;flex-wrap:nowrap;overflow:hidden;
+  flex-shrink:0;min-height:0;flex-wrap:wrap;
+  justify-content:space-between;
 }
 /* Left cluster: tag + importance badge */
 .mc-left{display:flex;align-items:center;gap:4px;flex-shrink:0}
@@ -999,13 +1000,10 @@ kbd{
   .modal-nav-count{display:none}
 }
 @media(max-width:500px){
-  .modal-chrome{padding:7px 10px;gap:5px}
-  .mc-title{font-size:12px}
-  .imp-badge{display:none}
-  .fs-stepper{display:none}
-}
-@media(max-width:400px){
-  .modal-tag{display:none}
+  .modal-chrome{padding:7px 8px;gap:5px;row-gap:7px}
+  /* font stepper stays visible — moves to its own row on mobile */
+  .fs-stepper{order:-1;flex:0 0 auto}
+  .mc-right{flex-wrap:wrap;justify-content:flex-end;gap:4px}
 }
 
 /* ── TOPBAR OVERFLOW FIXES ──────────────────── */
@@ -1274,7 +1272,7 @@ kbd{
   <div id="modal">
     <!-- unified single-row chrome -->
     <div class="modal-chrome">
-      <div class="mc-right" style="margin-left:auto">
+      <div class="mc-right">
         <div class="fs-stepper">
           <button class="fs-step-btn" id="fs-decrease" onclick="stepFontSize(-1)" title="Smaller">−</button>
           <span class="fs-cur-label" id="fs-cur-label">M</span>
