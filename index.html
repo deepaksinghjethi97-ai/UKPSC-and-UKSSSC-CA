@@ -1274,12 +1274,7 @@ kbd{
   <div id="modal">
     <!-- unified single-row chrome -->
     <div class="modal-chrome">
-      <div class="mc-left">
-        <div class="modal-tag" id="m-tag"></div>
-        <span class="imp-badge" id="m-imp"></span>
-      </div>
-      <div class="mc-title" id="m-title" title="">Loading…</div>
-      <div class="mc-right">
+      <div class="mc-right" style="margin-left:auto">
         <div class="fs-stepper">
           <button class="fs-step-btn" id="fs-decrease" onclick="stepFontSize(-1)" title="Smaller">−</button>
           <span class="fs-cur-label" id="fs-cur-label">M</span>
@@ -1294,21 +1289,20 @@ kbd{
         </button>
         <div class="mc-divider"></div>
         <div class="modal-nav">
-          <button class="modal-nav-btn" id="btn-prev" onclick="navigateModal(-1)" disabled title="Previous (←)"><i class="ti ti-chevron-left"></i></button>
+          <button class="modal-nav-btn" id="btn-prev" onclick="navigateModal(-1)" disabled title="Previous (&#8592;)"><i class="ti ti-chevron-left"></i></button>
           <span class="modal-nav-count" id="nav-count"></span>
-          <button class="modal-nav-btn" id="btn-next" onclick="navigateModal(1)" disabled title="Next (→)"><i class="ti ti-chevron-right"></i></button>
+          <button class="modal-nav-btn" id="btn-next" onclick="navigateModal(1)" disabled title="Next (&#8594;)"><i class="ti ti-chevron-right"></i></button>
         </div>
         <div class="mc-divider"></div>
-        <button class="mc-share-btn" id="modal-share-btn" onclick="copyArticleLink()" title="Copy link (S)"><i class="ti ti-link"></i></button>
         <button class="modal-close" onclick="closeModal()" title="Close (Esc)"><i class="ti ti-x"></i></button>
       </div>
     </div>
-    <!-- slim meta row -->
-    <div class="modal-meta-row" id="modal-meta-row">
-      <div class="meta-item"><i class="ti ti-calendar"></i><span id="m-date"></span></div>
-      <div class="meta-item"><i class="ti ti-folder"></i><span id="m-cat"></span></div>
-      <div class="meta-item meta-reading-time" id="m-read-time" style="display:none"><i class="ti ti-clock"></i><span id="m-read-time-val"></span></div>
-      <div class="meta-item" id="m-tags-wrap" style="display:none"><i class="ti ti-hash"></i><div class="modal-tag-chips" id="m-tags"></div></div>
+    <!-- hidden stubs kept for JS compatibility -->
+    <div style="display:none">
+      <div id="m-tag"></div><span id="m-imp"></span><span id="m-title"></span>
+      <span id="m-date"></span><span id="m-cat"></span><span id="m-read-time-val"></span>
+      <div id="m-tags"></div><div id="m-tags-wrap"></div><div id="m-read-time"></div>
+      <div id="modal-meta-row"></div><button id="modal-share-btn" onclick="copyArticleLink()"></button>
     </div>
     <div class="modal-body fs-md" id="m-body">
       <div style="text-align:center;padding:40px;color:var(--text3)"><i class="ti ti-loader" style="font-size:28px"></i></div>
