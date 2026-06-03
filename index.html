@@ -1589,7 +1589,7 @@ function renderCard(docSnap) {
       <button class="card-bm-btn ${isBookmarked(id)?'bookmarked':''}" onclick="cardBookmark(event,'${id}')" title="Bookmark">
         <i class="ti ${bmIcon}"></i>
       </button>
-      <span class="card-tag ${tagCls}"><i class="ti ti-tag"></i>${(d.category||"").toUpperCase()}</span>
+
       <div class="card-title">${escHtml(d.title||"Untitled")}</div>
       ${snippet}
       <div class="card-meta">
@@ -1705,9 +1705,6 @@ window.loadSection = async function(cat, label, icon, id="") {
       <div class="load-more-row"><button class="load-more-btn" id="load-more-btn" onclick="loadMore()" disabled><i class="ti ti-loader"></i> Loading…</button></div>`;
   } else if (cat === "all") {
     root.innerHTML = `
-      ${sectionHeader(label||cat, icon||"ti-tag", siClass)}
-      <div id="continue-strip-container"></div>
-      <div id="top-picks-container"></div>
       <div class="cards-grid" id="cards-container">${renderSkeletons()}</div>
       <div class="load-more-row"><button class="load-more-btn" id="load-more-btn" onclick="loadMore()" disabled><i class="ti ti-loader"></i> Loading…</button></div>`;
   } else {
@@ -1794,10 +1791,8 @@ async function fetchCards(fresh = false) {
     // Collect IDs for modal navigation
     snap.docs.forEach(d => { if (!modalArticleIds.includes(d.id)) modalArticleIds.push(d.id); });
 
-    // Render top picks on first load of "all"
+    // Render sidebar progress on first load of "all"
     if (fresh && currentCategory === "all") {
-      renderTopPicks(snap.docs);
-      renderContinueStrip(snap.docs);
       updateSidebarProgress();
     }
 
