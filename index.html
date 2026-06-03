@@ -488,6 +488,7 @@ button{font-family:var(--font);cursor:pointer}
 .modal-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
 
 /* Dynamic font sizing */
+.modal-body.fs-xs{font-size:11px}
 .modal-body.fs-sm{font-size:13px}
 .modal-body.fs-md{font-size:15px}
 .modal-body.fs-lg{font-size:17px}
@@ -1011,6 +1012,24 @@ kbd{
   .exam-chip{display:none}
   .date-chip{display:none}
 }
+
+/* ── MODAL FULL WIDTH ON MOBILE ─────────────── */
+@media(max-width:700px){
+  #modal-overlay{
+    padding:0;
+    align-items:flex-end;
+  }
+  #modal{
+    max-width:100%;
+    width:100%;
+    border-radius:18px 18px 0 0;
+    max-height:96vh;
+    margin:0;
+  }
+  .modal-body{
+    padding:16px 16px 24px;
+  }
+}
 </style>
 </head>
 <body>
@@ -1388,8 +1407,8 @@ function updateReadCount() {
 }
 
 /* ── Font size stepper ──────────────────────────── */
-const FS_SIZES  = ["sm","md","lg","xl"];
-const FS_LABELS = {"sm":"S","md":"M","lg":"L","xl":"XL"};
+const FS_SIZES  = ["xs","sm","md","lg","xl"];
+const FS_LABELS = {"xs":"XS","sm":"S","md":"M","lg":"L","xl":"XL"};
 let currentFs = localStorage.getItem("ca_fs") || "md";
 
 function applyFontSize(sz) {
