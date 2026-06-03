@@ -658,8 +658,165 @@ button{font-family:var(--font);cursor:pointer}
 /* ── FOCUS RING ACCESSIBILITY ─────────────────────────── */
 button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
-/* ── SMOOTH SECTION TRANSITIONS ───────────────────────── */
-#section-root{animation:fadeIn .25s ease}
+/* ══════════════════════════════════════════════
+   UI/UX IMPROVEMENTS
+══════════════════════════════════════════════ */
+
+/* ── TOPBAR CENTRAL SEARCH ─────────────────── */
+#topbar{gap:12px}
+.topbar-search-wrap{
+  flex:1;max-width:480px;position:relative;
+  display:flex;align-items:center;
+}
+.topbar-search-icon{
+  position:absolute;left:11px;font-size:15px;
+  color:var(--text3);pointer-events:none;transition:color .2s;
+}
+.topbar-search-input{
+  width:100%;background:var(--bg3);border:1px solid var(--border);
+  border-radius:10px;padding:8px 40px 8px 34px;
+  color:var(--text);font-family:var(--font);font-size:13px;outline:none;
+  transition:border-color .2s,box-shadow .2s,background .2s;
+}
+.topbar-search-input:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(79,110,247,.12);
+  background:var(--bg4);
+}
+.topbar-search-input:focus + .topbar-search-icon,
+.topbar-search-wrap:focus-within .topbar-search-icon{color:var(--accent)}
+.topbar-search-input::placeholder{color:var(--text3)}
+.topbar-search-kbd{
+  position:absolute;right:10px;
+  background:var(--bg4);border:1px solid var(--border);
+  border-radius:5px;padding:1px 6px;font-size:10px;
+  color:var(--text3);font-family:var(--mono);
+  pointer-events:none;transition:opacity .2s;
+}
+.topbar-search-input:focus ~ .topbar-search-kbd{opacity:0}
+@media(max-width:700px){
+  .topbar-search-wrap{display:none}
+}
+
+/* ── SIDEBAR SEARCH — hide on desktop (now in topbar) ── */
+@media(min-width:701px){
+  .sb-search{display:none}
+}
+
+/* ── SIDEBAR IMPROVEMENTS ──────────────────── */
+.nav-label{
+  padding:12px 16px 4px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nav-label-count{
+  background:var(--bg3);color:var(--text3);border-radius:10px;
+  font-size:9px;font-weight:600;padding:1px 6px;font-family:var(--mono);
+}
+/* Sidebar section divider lines */
+.nav-section{padding:4px 0;border-bottom:1px solid rgba(42,48,80,.5)}
+.nav-section:last-child{border-bottom:none}
+
+/* ── CARDS — bigger, clearer hierarchy ─────── */
+.card{padding:18px 16px 14px;border-radius:14px}
+.card-title{font-size:14.5px;font-weight:600;line-height:1.6;margin-bottom:12px;color:var(--text)}
+.card-meta{font-size:12px;color:var(--text3);gap:8px}
+
+/* Importance strip at bottom of card instead of tiny dot */
+.card-imp-strip{
+  height:3px;border-radius:0 0 14px 14px;
+  position:absolute;bottom:0;left:0;right:0;
+}
+.card-imp-strip.imp-high{background:linear-gradient(90deg,var(--red),transparent)}
+.card-imp-strip.imp-medium{background:linear-gradient(90deg,var(--amber),transparent)}
+.card-imp-strip.imp-low{background:linear-gradient(90deg,var(--green),transparent)}
+
+/* Importance label pill on card — replaces invisible dot */
+.card-imp-pill{
+  display:inline-flex;align-items:center;gap:3px;
+  font-size:9.5px;font-weight:700;padding:2px 7px;
+  border-radius:4px;letter-spacing:.3px;margin-left:auto;flex-shrink:0;
+}
+.imp-pill-high{background:rgba(247,90,124,.12);color:var(--red);border:1px solid rgba(247,90,124,.2)}
+.imp-pill-med{background:rgba(247,185,61,.12);color:var(--amber);border:1px solid rgba(247,185,61,.2)}
+.imp-pill-low{background:rgba(61,224,160,.12);color:var(--green);border:1px solid rgba(61,224,160,.2)}
+
+/* ── FILTER TOOLBAR IMPROVEMENTS ──────────── */
+.filter-toolbar{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:12px;padding:10px 14px;margin-bottom:18px;
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+}
+.ft-label{font-size:11px;color:var(--text3);font-weight:600;white-space:nowrap;display:flex;align-items:center;gap:5px}
+.ft-label i{font-size:13px;color:var(--text3)}
+.ft-result-count{
+  margin-left:auto;font-size:11px;color:var(--text3);
+  font-family:var(--mono);white-space:nowrap;
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:6px;padding:3px 8px;
+}
+.ft-result-count strong{color:var(--accent)}
+
+/* ── SORT BUTTON ───────────────────────────── */
+.ft-sort-btn{
+  display:inline-flex;align-items:center;gap:5px;
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:7px;padding:5px 11px;
+  font-size:11.5px;font-weight:500;color:var(--text2);
+  cursor:pointer;font-family:var(--font);white-space:nowrap;
+  transition:border-color .18s,color .18s,background .18s;
+}
+.ft-sort-btn:hover{border-color:var(--border2);color:var(--text);background:var(--bg3)}
+.ft-sort-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(79,110,247,.08)}
+
+/* ── SECTION HEADER — article count ────────── */
+.sec-count-badge{
+  background:var(--bg3);color:var(--text3);border:1px solid var(--border);
+  border-radius:20px;font-size:10px;font-weight:600;
+  padding:2px 9px;font-family:var(--mono);margin-left:6px;
+}
+
+/* ── CARDS GRID — slightly wider cards ─────── */
+.cards-grid{grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+
+/* ── MODAL READING IMPROVEMENTS ────────────── */
+.modal-body{padding:28px 32px;line-height:1.9}
+.modal-body.fs-md{font-size:15.5px}
+.rich-content p{margin-bottom:14px;line-height:1.9}
+.rich-content h2{font-size:18px;margin:28px 0 12px}
+.rich-content h3{font-size:15px;margin:22px 0 9px}
+.rich-content li{margin-bottom:8px;line-height:1.8}
+
+/* Reading progress indicator inside modal */
+.modal-read-progress{
+  height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));
+  border-radius:2px;width:0;transition:width .1s;
+  position:absolute;bottom:0;left:0;right:0;
+}
+
+/* ── EMPTY STATE — more helpful ─────────────── */
+.empty-state{padding:64px 24px}
+.empty-state i{font-size:48px;margin-bottom:16px;opacity:.3}
+.empty-state h3{font-size:15px;font-weight:600;color:var(--text2);margin-bottom:6px}
+.empty-state p{font-size:13px;color:var(--text3);line-height:1.7;max-width:260px}
+
+/* ── TICKER — slightly taller, more visible ── */
+.ticker-bar{
+  padding:10px 16px;border-radius:10px;
+  background:linear-gradient(90deg,var(--bg3),var(--bg2));
+  border-color:rgba(79,110,247,.2);
+}
+.tick-item{font-size:12px;color:var(--text2)}
+.tick-item i{color:var(--accent);font-size:13px}
+
+/* ── MOBILE SEARCH IN TOPBAR ────────────────── */
+@media(max-width:700px){
+  .sb-search{display:block}
+  .topbar-search-wrap{display:none}
+  #topbar{padding:10px 14px}
+}
+
+/* ── SMOOTH FOCUS for inputs ────────────────── */
+.sb-search input:focus,.topbar-search-input:focus{outline:none}
 </style>
 </head>
 <body>
@@ -764,6 +921,12 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
           <span class="cur" id="bc-cur">Dashboard</span>
         </div>
       </div>
+      <!-- ── CENTRAL SEARCH ── -->
+      <div class="topbar-search-wrap">
+        <i class="ti ti-search topbar-search-icon"></i>
+        <input class="topbar-search-input" id="topbarSearch" placeholder="Search articles, topics, keywords…" oninput="handleSearch(this.value)" autocomplete="off"/>
+        <kbd class="topbar-search-kbd">⌘K</kbd>
+      </div>
       <div class="tb-right">
         <div class="date-chip"><i class="ti ti-calendar"></i><span id="cur-date"></span></div>
         <span class="exam-chip ukpsc">UKPSC</span>
@@ -782,6 +945,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 
       <!-- compact filter toolbar -->
       <div class="filter-toolbar" id="filter-toolbar">
+
+        <span class="ft-label"><i class="ti ti-adjustments-horizontal"></i> Filter</span>
+        <div class="ft-sep"></div>
 
         <!-- Date dropdown trigger -->
         <div style="position:relative">
@@ -834,22 +1000,22 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
           </button>
           <!-- Importance dropdown panel -->
           <div class="ft-dropdown imp-dropdown" id="ft-imp-dropdown" style="display:none">
-            <div class="ft-dd-label"><i class="ti ti-flame"></i> Importance</div>
+            <div class="ft-dd-label"><i class="ti ti-flame"></i> Priority</div>
             <div class="ft-dd-pills">
               <div class="ft-dd-opt selected" data-imp="all" onclick="setImpFilter('all',this)">
                 <i class="ti ti-list"></i> All Priorities
                 <i class="ti ti-check ft-dd-check"></i>
               </div>
               <div class="ft-dd-opt sel-high" data-imp="high" onclick="setImpFilter('high',this)">
-                <i class="ti ti-flame" style="color:var(--red)"></i> High
+                <i class="ti ti-flame" style="color:var(--red)"></i> 🔴 Must Know
                 <i class="ti ti-check ft-dd-check"></i>
               </div>
               <div class="ft-dd-opt sel-medium" data-imp="medium" onclick="setImpFilter('medium',this)">
-                <i class="ti ti-minus" style="color:var(--amber)"></i> Medium
+                <i class="ti ti-minus" style="color:var(--amber)"></i> 🟡 Important
                 <i class="ti ti-check ft-dd-check"></i>
               </div>
               <div class="ft-dd-opt sel-low" data-imp="low" onclick="setImpFilter('low',this)">
-                <i class="ti ti-arrow-down" style="color:var(--green)"></i> Low
+                <i class="ti ti-arrow-down" style="color:var(--green)"></i> 🟢 Good to Know
                 <i class="ti ti-check ft-dd-check"></i>
               </div>
             </div>
@@ -863,8 +1029,13 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 
         <!-- Clear all (shown only when any filter active) -->
         <button class="ft-clear" id="ft-clear-btn" onclick="clearAllFilters()" style="display:none">
-          <i class="ti ti-x"></i> Clear
+          <i class="ti ti-x"></i> Clear filters
         </button>
+
+        <!-- Result count — right aligned -->
+        <span class="ft-result-count" id="ft-result-count" style="display:none">
+          <strong id="ft-count-num">0</strong> articles
+        </span>
 
       </div>
 
@@ -1870,22 +2041,49 @@ async function reloadWithFilters() {
   container.innerHTML = renderSkeletons();
   const btn = document.getElementById("load-more-btn");
   if (btn) { btn.disabled = true; btn.innerHTML = `<i class="ti ti-loader"></i> Filtering…`; }
+
+  let docs = [];
   try {
+    // Primary query: category + orderBy date (requires composite index in Firestore)
     const q = currentCategory === "all"
       ? query(collection(db, ARTICLES), orderBy("date","desc"), limit(200))
       : query(collection(db, ARTICLES), where("category","==",currentCategory), orderBy("date","desc"), limit(200));
     const snap = await getDocs(q);
-    const filtered = filterDocs(snap.docs);
-    container.innerHTML = "";
-    modalArticleIds = filtered.map(d => d.id);
-    if (!filtered.length) {
-      container.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><i class="ti ti-filter-off" style="font-size:36px;margin-bottom:10px;opacity:.4"></i><p style="font-size:14px;font-weight:600;color:var(--text2)">No articles match your filters.</p><p style="font-size:11px;color:var(--text3);margin-top:4px">Try a wider date range or different importance level.</p></div>`;
-      if (btn) btn.style.display = "none";
-    } else {
-      filtered.forEach(d => container.insertAdjacentHTML("beforeend", renderCard(d)));
-      if (btn) btn.style.display = "none";
+    docs = snap.docs;
+  } catch(primaryErr) {
+    // Fallback: query without orderBy (no index needed), then sort client-side
+    // This handles the case where the composite index (category + date) hasn't been created yet
+    console.warn("Primary filter query failed (index may be missing), using client-side sort fallback:", primaryErr.message);
+    try {
+      const fallbackQ = currentCategory === "all"
+        ? query(collection(db, ARTICLES), limit(500))
+        : query(collection(db, ARTICLES), where("category","==",currentCategory), limit(500));
+      const snap = await getDocs(fallbackQ);
+      // Sort by date descending on the client side
+      docs = snap.docs.sort((a, b) => {
+        const aDate = a.data().date?.toDate ? a.data().date.toDate() : new Date(a.data().date || 0);
+        const bDate = b.data().date?.toDate ? b.data().date.toDate() : new Date(b.data().date || 0);
+        return bDate - aDate;
+      });
+    } catch(fallbackErr) {
+      console.error("Filter fallback also failed:", fallbackErr);
+      container.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><i class="ti ti-alert-circle" style="font-size:36px;margin-bottom:10px;opacity:.4"></i><p style="font-size:14px;font-weight:600;color:var(--text2)">Could not load articles.</p><p style="font-size:11px;color:var(--text3);margin-top:4px">Check your connection and try again.</p></div>`;
+      if (btn) { btn.disabled = false; btn.innerHTML = `<i class="ti ti-refresh"></i> Retry`; }
+      isLoading = false;
+      return;
     }
-  } catch(err) { console.error("Filter error:", err); }
+  }
+
+  const filtered = filterDocs(docs);
+  container.innerHTML = "";
+  modalArticleIds = filtered.map(d => d.id);
+  if (!filtered.length) {
+    container.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><i class="ti ti-filter-off" style="font-size:36px;margin-bottom:10px;opacity:.4"></i><p style="font-size:14px;font-weight:600;color:var(--text2)">No articles match your filters.</p><p style="font-size:11px;color:var(--text3);margin-top:4px">Try a wider date range or different importance level.</p></div>`;
+    if (btn) btn.style.display = "none";
+  } else {
+    filtered.forEach(d => container.insertAdjacentHTML("beforeend", renderCard(d)));
+    if (btn) btn.style.display = "none";
+  }
   isLoading = false;
 }
 
