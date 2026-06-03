@@ -817,12 +817,204 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 
 /* ── SMOOTH FOCUS for inputs ────────────────── */
 .sb-search input:focus,.topbar-search-input:focus{outline:none}
+
+/* ══════════════════════════════════════════════
+   NEW UX IMPROVEMENTS
+══════════════════════════════════════════════ */
+
+/* ── 1. READING PROGRESS PILLS in sidebar ── */
+.nav-progress{
+  margin-left:auto;font-size:9px;font-weight:700;font-family:var(--mono);
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:10px;padding:1px 7px;color:var(--text3);
+  white-space:nowrap;transition:background .2s,color .2s,border-color .2s;
+}
+.nav-item.active .nav-progress{
+  background:rgba(79,110,247,.12);color:var(--accent);border-color:rgba(79,110,247,.25);
+}
+
+/* ── 1b. CONTINUE READING STRIP ── */
+#continue-strip{
+  background:var(--bg2);border:1px solid rgba(79,110,247,.2);
+  border-radius:12px;padding:12px 16px;margin-bottom:16px;
+  animation:fadeUp .35s ease both;
+}
+.continue-hdr{
+  display:flex;align-items:center;gap:7px;margin-bottom:10px;
+}
+.continue-hdr i{color:var(--accent);font-size:15px}
+.continue-hdr span{font-size:11.5px;font-weight:700;color:var(--text2)}
+.continue-hdr .continue-all{
+  margin-left:auto;font-size:10.5px;color:var(--text3);cursor:pointer;
+  background:transparent;border:none;font-family:var(--font);
+  transition:color .15s;
+}
+.continue-hdr .continue-all:hover{color:var(--accent)}
+.continue-list{display:flex;flex-direction:column;gap:4px}
+.continue-item{
+  display:flex;align-items:center;gap:9px;padding:7px 10px;
+  border-radius:8px;cursor:pointer;border:1px solid transparent;
+  transition:background .15s,border-color .15s;
+}
+.continue-item:hover{background:var(--bg3);border-color:var(--border)}
+.continue-item-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.continue-item-dot.imp-high{background:var(--red)}
+.continue-item-dot.imp-med{background:var(--amber)}
+.continue-item-dot.imp-low{background:var(--green)}
+.continue-item-title{font-size:12.5px;color:var(--text2);flex:1;line-height:1.35}
+.continue-item-cat{font-size:9.5px;font-weight:700;padding:1px 6px;border-radius:3px;flex-shrink:0}
+.continue-item-date{font-size:10px;color:var(--text3);font-family:var(--mono);flex-shrink:0}
+
+/* ── 2. MOBILE SEARCH BAR (slide-down) ── */
+#mobile-search-bar{
+  display:none;overflow:hidden;
+  max-height:0;transition:max-height .25s cubic-bezier(.4,0,.2,1);
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  padding:0 14px;
+}
+#mobile-search-bar.open{max-height:56px;padding:8px 14px}
+#mobile-search-bar input{
+  width:100%;background:var(--bg3);border:1px solid var(--border);
+  border-radius:9px;padding:8px 12px 8px 34px;
+  color:var(--text);font-family:var(--font);font-size:13px;outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+#mobile-search-bar input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,110,247,.1)}
+#mobile-search-bar .msb-icon{position:absolute;left:24px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:14px;pointer-events:none}
+@media(max-width:700px){
+  #mobile-search-bar{display:block;position:relative}
+  .mobile-search-btn{
+    display:flex;align-items:center;justify-content:center;
+    background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+    padding:6px 9px;color:var(--text2);font-size:16px;cursor:pointer;
+    transition:color .15s,background .15s;
+  }
+  .mobile-search-btn.active{border-color:var(--accent);color:var(--accent);background:rgba(79,110,247,.08)}
+}
+@media(min-width:701px){
+  .mobile-search-btn{display:none}
+}
+
+/* ── 3. CARD SNIPPET (summary preview text) ── */
+.card-snippet{
+  font-size:12px;color:var(--text3);line-height:1.55;
+  margin-bottom:10px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+
+/* ── 4. CARD IMPORTANCE — left border accent replaces tiny dot ── */
+.card-imp-bar{
+  position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:0 2px 2px 0;
+}
+.card-imp-bar.imp-high{background:var(--red);box-shadow:0 0 6px rgba(247,90,124,.35)}
+.card-imp-bar.imp-med{background:var(--amber)}
+.card-imp-bar.imp-low{background:var(--green)}
+
+/* ── 5. TICKER PLACEHOLDER to avoid layout shift ── */
+.ticker-placeholder{
+  height:42px;background:var(--bg3);border:1px solid var(--border);
+  border-radius:10px;margin-bottom:18px;
+  animation:shimmer 1.8s ease-in-out infinite;
+}
+
+/* ── 6. TAGS as clickable chips in modal ── */
+.modal-tag-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:1px}
+.modal-tag-chip{
+  display:inline-flex;align-items:center;gap:3px;
+  padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;
+  cursor:pointer;background:var(--bg3);border:1px solid var(--border);
+  color:var(--text3);transition:background .15s,color .15s,border-color .15s;
+  font-family:var(--font);
+}
+.modal-tag-chip:hover{background:rgba(79,110,247,.1);border-color:var(--accent);color:var(--accent)}
+.modal-tag-chip i{font-size:10px}
+
+/* ── 7. LOAD MORE — end of results state ── */
+.end-of-results{
+  text-align:center;padding:12px 0 20px;font-size:11.5px;
+  color:var(--text3);display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.end-of-results i{font-size:13px;opacity:.5}
+
+/* ── 8. BACK TO TOP button ── */
+#back-to-top{
+  position:fixed;bottom:28px;right:24px;z-index:150;
+  background:var(--bg2);border:1px solid var(--border2);
+  border-radius:50%;width:40px;height:40px;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--text2);font-size:17px;cursor:pointer;
+  box-shadow:0 4px 18px rgba(0,0,0,.4);
+  opacity:0;pointer-events:none;transform:translateY(12px);
+  transition:opacity .22s,transform .22s,border-color .18s,color .18s;
+}
+#back-to-top.visible{opacity:1;pointer-events:auto;transform:translateY(0)}
+#back-to-top:hover{border-color:var(--accent);color:var(--accent)}
+@media(max-width:600px){
+  #back-to-top{bottom:20px;right:16px;width:36px;height:36px;font-size:15px}
+}
+
+/* ── 9. KEYBOARD SHORTCUT HELP PANEL ── */
+#kb-help{
+  position:fixed;inset:0;z-index:500;display:none;
+  align-items:center;justify-content:center;
+  background:rgba(0,0,0,.75);backdrop-filter:blur(8px);
+}
+#kb-help.open{display:flex}
+.kb-panel{
+  background:var(--bg2);border:1px solid var(--border2);border-radius:16px;
+  padding:24px 28px;width:340px;max-width:calc(100vw - 40px);
+  box-shadow:0 24px 64px rgba(0,0,0,.6);
+  animation:modalIn .25s cubic-bezier(.22,.68,0,1.2) both;
+}
+.kb-panel h3{font-size:13px;font-weight:700;color:var(--text2);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.kb-panel h3 i{color:var(--accent)}
+.kb-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(42,48,80,.5)}
+.kb-row:last-child{border-bottom:none}
+.kb-desc{font-size:12px;color:var(--text2)}
+.kb-keys{display:flex;gap:4px}
+kbd{
+  background:var(--bg3);border:1px solid var(--border2);border-radius:5px;
+  padding:2px 7px;font-size:10px;font-family:var(--mono);color:var(--text2);
+  line-height:1.5;
+}
+
+/* ── 10. SHARE / COPY LINK button in modal ── */
+.mc-share-btn{
+  background:transparent;border:1px solid transparent;border-radius:6px;
+  padding:3px 8px;color:var(--text2);font-size:14px;
+  display:flex;align-items:center;cursor:pointer;
+  transition:color .15s,border-color .15s,background .15s;
+}
+.mc-share-btn:hover{color:var(--text);border-color:var(--border);background:var(--bg3)}
+.mc-share-btn.copied{color:var(--green);border-color:rgba(61,224,160,.3);background:rgba(61,224,160,.06)}
+
+/* ── 11. READING TIME in modal meta row ── */
+.meta-reading-time{display:flex;align-items:center;gap:3px;font-size:10.5px;color:var(--text3)}
+.meta-reading-time i{font-size:11px}
 </style>
 </head>
 <body>
 <div id="read-progress"></div>
 <div class="content-glow"></div>
 <div id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+<!-- Back to top -->
+<button id="back-to-top" onclick="scrollToTop()" title="Back to top"><i class="ti ti-arrow-up"></i></button>
+
+<!-- Keyboard shortcut help panel -->
+<div id="kb-help" onclick="closeKbHelp(event)">
+  <div class="kb-panel">
+    <h3><i class="ti ti-keyboard"></i> Keyboard shortcuts</h3>
+    <div class="kb-row"><span class="kb-desc">Search</span><div class="kb-keys"><kbd>Ctrl</kbd><kbd>K</kbd></div></div>
+    <div class="kb-row"><span class="kb-desc">Close modal / panel</span><div class="kb-keys"><kbd>Esc</kbd></div></div>
+    <div class="kb-row"><span class="kb-desc">Previous article</span><div class="kb-keys"><kbd>←</kbd></div></div>
+    <div class="kb-row"><span class="kb-desc">Next article</span><div class="kb-keys"><kbd>→</kbd></div></div>
+    <div class="kb-row"><span class="kb-desc">Bookmark article</span><div class="kb-keys"><kbd>B</kbd></div></div>
+    <div class="kb-row"><span class="kb-desc">Mark read / unread</span><div class="kb-keys"><kbd>R</kbd></div></div>
+    <div class="kb-row"><span class="kb-desc">Copy article link</span><div class="kb-keys"><kbd>S</kbd></div></div>
+    <div class="kb-row"><span class="kb-desc">This help panel</span><div class="kb-keys"><kbd>?</kbd></div></div>
+  </div>
+</div>
 <div id="app">
 
   <!-- ══════════ SIDEBAR ══════════ -->
@@ -858,30 +1050,30 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
         <i class="ti ti-flag"></i> National <i class="ti ti-chevron-down expand-icon"></i>
       </div>
       <div class="nav-sub" id="sub-national">
-        <div class="nav-item" onclick="loadSection('defence','Defence','ti-shield')"><i class="ti ti-shield"></i> Defence</div>
-        <div class="nav-item" onclick="loadSection('tech','Technology','ti-cpu')"><i class="ti ti-cpu"></i> Technology</div>
-        <div class="nav-item" onclick="loadSection('space','Space','ti-rocket')"><i class="ti ti-rocket"></i> Space</div>
-        <div class="nav-item" onclick="loadSection('appointments','Appointments','ti-user-star')"><i class="ti ti-user-star"></i> Appointments</div>
+        <div class="nav-item" data-cat="defence" onclick="loadSection('defence','Defence','ti-shield')"><i class="ti ti-shield"></i> Defence</div>
+        <div class="nav-item" data-cat="tech" onclick="loadSection('tech','Technology','ti-cpu')"><i class="ti ti-cpu"></i> Technology</div>
+        <div class="nav-item" data-cat="space" onclick="loadSection('space','Space','ti-rocket')"><i class="ti ti-rocket"></i> Space</div>
+        <div class="nav-item" data-cat="appointments" onclick="loadSection('appointments','Appointments','ti-user-star')"><i class="ti ti-user-star"></i> Appointments</div>
         <div class="nav-item" onclick="toggleSub('sub-sports',this)">
           <i class="ti ti-trophy"></i> Sports <i class="ti ti-chevron-down expand-icon"></i>
         </div>
         <div class="nav-sub" id="sub-sports">
-          <div class="nav-item" onclick="loadSection('cricket','Cricket','ti-cricket')"><i class="ti ti-cricket"></i> Cricket</div>
-          <div class="nav-item" onclick="loadSection('chess','Chess','ti-chess')"><i class="ti ti-chess"></i> Chess</div>
-          <div class="nav-item" onclick="loadSection('badminton','Badminton','ti-ripple')"><i class="ti ti-ripple"></i> Badminton</div>
-          <div class="nav-item" onclick="loadSection('tennis','Tennis','ti-ball-tennis')"><i class="ti ti-ball-tennis"></i> Tennis</div>
-          <div class="nav-item" onclick="loadSection('football','Football','ti-ball-football')"><i class="ti ti-ball-football"></i> Football</div>
-          <div class="nav-item" onclick="loadSection('wrestling','Wrestling','ti-shield-half')"><i class="ti ti-shield-half"></i> Wrestling</div>
-          <div class="nav-item" onclick="loadSection('hockey','Hockey','ti-snowflake')"><i class="ti ti-snowflake"></i> Hockey</div>
-          <div class="nav-item" onclick="loadSection('athletics','Athletics','ti-run')"><i class="ti ti-run"></i> Athletics</div>
-          <div class="nav-item" onclick="loadSection('boxing','Boxing','ti-boxing')"><i class="ti ti-boxing"></i> Boxing</div>
-          <div class="nav-item" onclick="loadSection('shooting','Shooting','ti-target')"><i class="ti ti-target"></i> Shooting</div>
-          <div class="nav-item" onclick="loadSection('sports-others','Other Sports','ti-dots')"><i class="ti ti-dots"></i> Others</div>
+          <div class="nav-item" data-cat="cricket" onclick="loadSection('cricket','Cricket','ti-cricket')"><i class="ti ti-cricket"></i> Cricket</div>
+          <div class="nav-item" data-cat="chess" onclick="loadSection('chess','Chess','ti-chess')"><i class="ti ti-chess"></i> Chess</div>
+          <div class="nav-item" data-cat="badminton" onclick="loadSection('badminton','Badminton','ti-ripple')"><i class="ti ti-ripple"></i> Badminton</div>
+          <div class="nav-item" data-cat="tennis" onclick="loadSection('tennis','Tennis','ti-ball-tennis')"><i class="ti ti-ball-tennis"></i> Tennis</div>
+          <div class="nav-item" data-cat="football" onclick="loadSection('football','Football','ti-ball-football')"><i class="ti ti-ball-football"></i> Football</div>
+          <div class="nav-item" data-cat="wrestling" onclick="loadSection('wrestling','Wrestling','ti-shield-half')"><i class="ti ti-shield-half"></i> Wrestling</div>
+          <div class="nav-item" data-cat="hockey" onclick="loadSection('hockey','Hockey','ti-snowflake')"><i class="ti ti-snowflake"></i> Hockey</div>
+          <div class="nav-item" data-cat="athletics" onclick="loadSection('athletics','Athletics','ti-run')"><i class="ti ti-run"></i> Athletics</div>
+          <div class="nav-item" data-cat="boxing" onclick="loadSection('boxing','Boxing','ti-boxing')"><i class="ti ti-boxing"></i> Boxing</div>
+          <div class="nav-item" data-cat="shooting" onclick="loadSection('shooting','Shooting','ti-target')"><i class="ti ti-target"></i> Shooting</div>
+          <div class="nav-item" data-cat="sports-others" onclick="loadSection('sports-others','Other Sports','ti-dots')"><i class="ti ti-dots"></i> Others</div>
         </div>
-        <div class="nav-item" onclick="loadSection('governance','Governance','ti-building-bank')"><i class="ti ti-building-bank"></i> Governance</div>
-        <div class="nav-item" onclick="loadSection('awards','Awards','ti-award')"><i class="ti ti-award"></i> Awards</div>
-        <div class="nav-item" onclick="loadSection('operations','Operations','ti-crosshair')"><i class="ti ti-crosshair"></i> Operations</div>
-        <div class="nav-item" onclick="loadSection('rankings','Rankings','ti-chart-bar')"><i class="ti ti-chart-bar"></i> Rankings</div>
+        <div class="nav-item" data-cat="governance" onclick="loadSection('governance','Governance','ti-building-bank')"><i class="ti ti-building-bank"></i> Governance</div>
+        <div class="nav-item" data-cat="awards" onclick="loadSection('awards','Awards','ti-award')"><i class="ti ti-award"></i> Awards</div>
+        <div class="nav-item" data-cat="operations" onclick="loadSection('operations','Operations','ti-crosshair')"><i class="ti ti-crosshair"></i> Operations</div>
+        <div class="nav-item" data-cat="rankings" onclick="loadSection('rankings','Rankings','ti-chart-bar')"><i class="ti ti-chart-bar"></i> Rankings</div>
       </div>
     </div>
 
@@ -891,20 +1083,20 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
         <i class="ti ti-world"></i> International <i class="ti ti-chevron-down expand-icon"></i>
       </div>
       <div class="nav-sub" id="sub-intl">
-        <div class="nav-item" onclick="loadSection('intl-tech','Intl. Technology','ti-cpu')"><i class="ti ti-cpu"></i> Tech</div>
-        <div class="nav-item" onclick="loadSection('intl-space','Intl. Space','ti-satellite')"><i class="ti ti-satellite"></i> Space &amp; Tech</div>
-        <div class="nav-item" onclick="loadSection('intl-sports','Intl. Sports','ti-trophy')"><i class="ti ti-trophy"></i> Sports</div>
-        <div class="nav-item" onclick="loadSection('intl-summits','Summits','ti-users')"><i class="ti ti-users"></i> Summits</div>
-        <div class="nav-item" onclick="loadSection('intl-rankings','Intl. Rankings','ti-list-numbers')"><i class="ti ti-list-numbers"></i> Rankings</div>
-        <div class="nav-item" onclick="loadSection('intl-health','Health','ti-stethoscope')"><i class="ti ti-stethoscope"></i> Health</div>
-        <div class="nav-item" onclick="loadSection('intl-operations','Intl. Operations','ti-crosshair')"><i class="ti ti-crosshair"></i> Operations</div>
-        <div class="nav-item" onclick="loadSection('intl-awards','Intl. Awards','ti-award')"><i class="ti ti-award"></i> Awards</div>
+        <div class="nav-item" data-cat="intl-tech" onclick="loadSection('intl-tech','Intl. Technology','ti-cpu')"><i class="ti ti-cpu"></i> Tech</div>
+        <div class="nav-item" data-cat="intl-space" onclick="loadSection('intl-space','Intl. Space','ti-satellite')"><i class="ti ti-satellite"></i> Space &amp; Tech</div>
+        <div class="nav-item" data-cat="intl-sports" onclick="loadSection('intl-sports','Intl. Sports','ti-trophy')"><i class="ti ti-trophy"></i> Sports</div>
+        <div class="nav-item" data-cat="intl-summits" onclick="loadSection('intl-summits','Summits','ti-users')"><i class="ti ti-users"></i> Summits</div>
+        <div class="nav-item" data-cat="intl-rankings" onclick="loadSection('intl-rankings','Intl. Rankings','ti-list-numbers')"><i class="ti ti-list-numbers"></i> Rankings</div>
+        <div class="nav-item" data-cat="intl-health" onclick="loadSection('intl-health','Health','ti-stethoscope')"><i class="ti ti-stethoscope"></i> Health</div>
+        <div class="nav-item" data-cat="intl-operations" onclick="loadSection('intl-operations','Intl. Operations','ti-crosshair')"><i class="ti ti-crosshair"></i> Operations</div>
+        <div class="nav-item" data-cat="intl-awards" onclick="loadSection('intl-awards','Intl. Awards','ti-award')"><i class="ti ti-award"></i> Awards</div>
       </div>
     </div>
 
     <div class="nav-section">
       <div class="nav-label">State</div>
-      <div class="nav-item" onclick="loadSection('uttarakhand','Uttarakhand','ti-mountain')">
+      <div class="nav-item" data-cat="uttarakhand" onclick="loadSection('uttarakhand','Uttarakhand','ti-mountain')">
         <i class="ti ti-mountain"></i> Uttarakhand
       </div>
     </div>
@@ -928,13 +1120,23 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
         <kbd class="topbar-search-kbd">⌘K</kbd>
       </div>
       <div class="tb-right">
+        <!-- mobile search icon (hidden on desktop) -->
+        <button class="mobile-search-btn" id="mobile-search-btn" onclick="toggleMobileSearch()" title="Search" aria-label="Search"><i class="ti ti-search"></i></button>
         <div class="date-chip"><i class="ti ti-calendar"></i><span id="cur-date"></span></div>
         <span class="exam-chip ukpsc">UKPSC</span>
         <span class="exam-chip uksssc">UKSSSC</span>
+        <button onclick="document.getElementById('kb-help').classList.toggle('open')" title="Keyboard shortcuts (?)" style="background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:4px 9px;color:var(--text3);font-size:11px;font-family:var(--mono);cursor:pointer;transition:color .15s,border-color .15s" onmouseover="this.style.color='var(--text)';this.style.borderColor='var(--border2)'" onmouseout="this.style.color='var(--text3)';this.style.borderColor='var(--border)'">?</button>
       </div>
+    </div>
+    <!-- Mobile search bar (slides down on mobile) -->
+    <div id="mobile-search-bar">
+      <i class="ti ti-search msb-icon"></i>
+      <input id="mobileSearch" placeholder="Search articles, topics, keywords…" oninput="handleSearch(this.value)" autocomplete="off"/>
     </div>
 
     <div id="content">
+      <!-- ticker placeholder prevents layout shift; real bar replaces it when data loads -->
+      <div class="ticker-placeholder" id="ticker-placeholder"></div>
       <!-- ticker — populated dynamically from Firestore ticker_items -->
       <div class="ticker-bar" id="ticker-bar" style="display:none">
         <span class="ticker-lbl">LIVE</span>
@@ -1075,6 +1277,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
           <button class="modal-nav-btn" id="btn-next" onclick="navigateModal(1)" disabled title="Next (→)"><i class="ti ti-chevron-right"></i></button>
         </div>
         <div class="mc-divider"></div>
+        <button class="mc-share-btn" id="modal-share-btn" onclick="copyArticleLink()" title="Copy link (S)"><i class="ti ti-link"></i></button>
         <button class="modal-close" onclick="closeModal()" title="Close (Esc)"><i class="ti ti-x"></i></button>
       </div>
     </div>
@@ -1082,7 +1285,8 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
     <div class="modal-meta-row" id="modal-meta-row">
       <div class="meta-item"><i class="ti ti-calendar"></i><span id="m-date"></span></div>
       <div class="meta-item"><i class="ti ti-folder"></i><span id="m-cat"></span></div>
-      <div class="meta-item" id="m-tags-wrap" style="display:none"><i class="ti ti-hash"></i><span id="m-tags"></span></div>
+      <div class="meta-item meta-reading-time" id="m-read-time" style="display:none"><i class="ti ti-clock"></i><span id="m-read-time-val"></span></div>
+      <div class="meta-item" id="m-tags-wrap" style="display:none"><i class="ti ti-hash"></i><div class="modal-tag-chips" id="m-tags"></div></div>
     </div>
     <div class="modal-body fs-md" id="m-body">
       <div style="text-align:center;padding:40px;color:var(--text3)"><i class="ti ti-loader" style="font-size:28px"></i></div>
@@ -1271,16 +1475,19 @@ loadTotalCount();
 
 /* ── Live Ticker — realtime from Firestore ──────── */
 (function initLiveTicker() {
-  const bar   = document.getElementById("ticker-bar");
-  const track = document.getElementById("ticker");
+  const bar         = document.getElementById("ticker-bar");
+  const track       = document.getElementById("ticker");
+  const placeholder = document.getElementById("ticker-placeholder");
   if (!bar || !track) return;
 
   async function fetchTicker() {
     try {
-      // Simple getDocs — no orderBy so no index needed, no persistent listener so no auth needed
       const snap = await getDocs(collection(db, "ticker_items"));
-      if (snap.empty) { bar.style.display = "none"; return; }
-      bar.style.display = "";
+      if (snap.empty) {
+        bar.style.display = "none";
+        if (placeholder) placeholder.style.display = "none";
+        return;
+      }
       // Sort client-side by createdAt asc
       const sorted = [...snap.docs].sort((a,b) => {
         const ta = a.data().createdAt?.toMillis?.() ?? 0;
@@ -1295,15 +1502,17 @@ loadTotalCount();
       }).join("");
       // Duplicate for seamless CSS scroll loop
       track.innerHTML = items + items;
+      // Swap placeholder for real ticker atomically (no layout shift)
+      if (placeholder) placeholder.style.display = "none";
+      bar.style.display = "";
     } catch(err) {
-      // Silently hide ticker if permissions not yet configured
       console.warn("Ticker unavailable:", err.message);
       bar.style.display = "none";
+      if (placeholder) placeholder.style.display = "none";
     }
   }
 
   fetchTicker();
-  // Refresh every 60s so new items appear without page reload
   setInterval(fetchTicker, 60000);
 })();
 
@@ -1339,7 +1548,8 @@ function renderCard(docSnap) {
   const d = docSnap.data();
   const id = docSnap.id;
   const tagCls = TAG_CLASS[d.category] || "t-tech";
-  const dotCls = d.importance === "high" ? "dot-high" : d.importance === "medium" ? "dot-med" : "dot-low";
+  const imp = (d.importance || "").toLowerCase();
+  const impBarCls = imp === "high" ? "imp-high" : imp === "medium" ? "imp-med" : "imp-low";
   const articleDate = d.date?.toDate ? d.date.toDate() : (d.date ? new Date(d.date) : null);
   const dateStr = articleDate
     ? articleDate.toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"})
@@ -1348,19 +1558,20 @@ function renderCard(docSnap) {
   const bmIcon  = isBookmarked(id) ? "ti-bookmark-filled bookmarked" : "ti-bookmark";
   const isNew = articleDate && (Date.now() - articleDate.getTime()) < 3 * 86400000;
   const newBadge = isNew ? `<span class="card-new-badge">NEW</span>` : "";
+  // Snippet: use summary field if available, fall back to nothing
+  const snippet = d.summary ? `<div class="card-snippet">${escHtml(d.summary)}</div>` : "";
   return `
     <div class="card${readCls}" data-id="${id}" onclick="openArticle('${id}')">
       ${newBadge}
-      <div class="card-dot ${dotCls}"></div>
+      <div class="card-imp-bar ${impBarCls}"></div>
       <button class="card-bm-btn ${isBookmarked(id)?'bookmarked':''}" onclick="cardBookmark(event,'${id}')" title="Bookmark">
         <i class="ti ${bmIcon}"></i>
       </button>
       <span class="card-tag ${tagCls}"><i class="ti ti-tag"></i>${(d.category||"").toUpperCase()}</span>
       <div class="card-title">${escHtml(d.title||"Untitled")}</div>
+      ${snippet}
       <div class="card-meta">
         <i class="ti ti-calendar"></i>${dateStr}
-        <span>·</span>
-        <i class="ti ti-flame"></i>${d.importance||"—"}
       </div>
     </div>`;
 }
@@ -1473,6 +1684,7 @@ window.loadSection = async function(cat, label, icon, id="") {
   } else if (cat === "all") {
     root.innerHTML = `
       ${sectionHeader(label||cat, icon||"ti-tag", siClass)}
+      <div id="continue-strip-container"></div>
       <div id="top-picks-container"></div>
       <div class="cards-grid" id="cards-container">${renderSkeletons()}</div>
       <div class="load-more-row"><button class="load-more-btn" id="load-more-btn" onclick="loadMore()" disabled><i class="ti ti-loader"></i> Loading…</button></div>`;
@@ -1561,7 +1773,11 @@ async function fetchCards(fresh = false) {
     snap.docs.forEach(d => { if (!modalArticleIds.includes(d.id)) modalArticleIds.push(d.id); });
 
     // Render top picks on first load of "all"
-    if (fresh && currentCategory === "all") renderTopPicks(snap.docs);
+    if (fresh && currentCategory === "all") {
+      renderTopPicks(snap.docs);
+      renderContinueStrip(snap.docs);
+      updateSidebarProgress();
+    }
 
     snap.docs.forEach(d => container.insertAdjacentHTML("beforeend", renderCard(d)));
 
@@ -1569,8 +1785,19 @@ async function fetchCards(fresh = false) {
     hasMore = snap.docs.length === PAGE_SIZE;
 
     if (btn) {
-      btn.style.display = hasMore ? "" : "none";
-      if (hasMore) { btn.disabled = false; btn.innerHTML = `<i class="ti ti-refresh"></i> Load more`; }
+      if (hasMore) {
+        btn.style.display = "";
+        btn.disabled = false;
+        btn.innerHTML = `<i class="ti ti-refresh"></i> Load more`;
+      } else {
+        // Replace button with end-of-results message
+        const row = btn.closest(".load-more-row");
+        if (row && fresh === false) {
+          row.innerHTML = `<div class="end-of-results"><i class="ti ti-circle-check"></i> All ${modalArticleIds.length} articles loaded</div>`;
+        } else {
+          btn.style.display = "none";
+        }
+      }
     }
   } catch(err) {
     console.error("fetchCards error:", err);
@@ -1595,6 +1822,9 @@ window.openArticle = async function(id) {
   overlay.classList.add("open");
   document.body.style.overflow = "hidden";
 
+  // Deep link — push article id to URL so it's shareable
+  history.pushState({ articleId: id }, "", `?article=${id}`);
+
   currentOpenId = id;
   const idx = modalArticleIds.indexOf(id);
   modalCurrentIdx = idx;
@@ -1606,6 +1836,10 @@ window.openArticle = async function(id) {
 
   document.getElementById("m-title").textContent = "Loading…";
   body.innerHTML = `<div style="text-align:center;padding:32px;color:var(--text3)"><i class="ti ti-loader" style="font-size:28px"></i></div>`;
+
+  // Reset share button
+  const shareBtn = document.getElementById("modal-share-btn");
+  if (shareBtn) { shareBtn.classList.remove("copied"); shareBtn.innerHTML = `<i class="ti ti-link"></i>`; shareBtn.title = "Copy link (S)"; }
 
   // Update toolbar bookmark/read state
   updateModalToolbar(id);
@@ -1635,12 +1869,28 @@ window.openArticle = async function(id) {
     impEl.className = `imp-badge ${imp === "high" ? "imp-high" : imp === "medium" ? "imp-medium" : "imp-low"}`;
     impEl.textContent = d.importance || "";
 
-    // Tags
+    // Tags — render as clickable chips
+    const tagsWrap = document.getElementById("m-tags-wrap");
+    const tagsEl   = document.getElementById("m-tags");
     if (d.tags && d.tags.length) {
-      document.getElementById("m-tags-wrap").style.display = "";
-      document.getElementById("m-tags").textContent = Array.isArray(d.tags) ? d.tags.join(", ") : d.tags;
+      const tagsArr = Array.isArray(d.tags) ? d.tags : d.tags.split(",").map(t => t.trim());
+      tagsEl.innerHTML = tagsArr.map(t =>
+        `<button class="modal-tag-chip" onclick="searchByTag('${escHtml(t)}')"><i class="ti ti-hash"></i>${escHtml(t)}</button>`
+      ).join("");
+      tagsWrap.style.display = "";
     } else {
-      document.getElementById("m-tags-wrap").style.display = "none";
+      tagsWrap.style.display = "none";
+    }
+
+    // Reading time
+    const content = d.content || d.body || "";
+    const wordCount = (typeof content === "string" ? content : JSON.stringify(content)).replace(/<[^>]+>/g, "").split(/\s+/).filter(Boolean).length;
+    const readMin = Math.max(1, Math.ceil(wordCount / 200));
+    const readTimeEl = document.getElementById("m-read-time");
+    const readTimeVal = document.getElementById("m-read-time-val");
+    if (readTimeEl && readTimeVal) {
+      readTimeVal.textContent = `~${readMin} min read`;
+      readTimeEl.style.display = "";
     }
 
     // Render rich content
@@ -1739,6 +1989,8 @@ window.closeModal = () => {
   const overlay = document.getElementById("modal-overlay");
   const modal   = document.getElementById("modal");
   modal.style.animation = "modalOut .2s cubic-bezier(.4,0,1,1) both";
+  // Clear deep link param
+  history.pushState({}, "", window.location.pathname);
   setTimeout(() => {
     overlay.classList.remove("open");
     modal.style.animation = "";
@@ -1746,14 +1998,49 @@ window.closeModal = () => {
     document.getElementById("read-progress").style.width = "0";
     const body = document.getElementById("m-body");
     body.removeEventListener("scroll", updateReadingProgress);
+    // Reset reading time
+    const rt = document.getElementById("m-read-time");
+    if (rt) rt.style.display = "none";
   }, 180);
 };
 window.closeModalOnOverlay = e => { if(e.target === document.getElementById("modal-overlay")) closeModal(); };
 document.addEventListener("keydown", e => {
-  if (e.key === "Escape") closeModal();
-  if (document.getElementById("modal-overlay").classList.contains("open")) {
-    if (e.key === "ArrowLeft") navigateModal(-1);
-    if (e.key === "ArrowRight") navigateModal(1);
+  const tag = document.activeElement?.tagName;
+  const inInput = tag === "INPUT" || tag === "TEXTAREA";
+  const modalOpen = document.getElementById("modal-overlay").classList.contains("open");
+  const kbOpen = document.getElementById("kb-help").classList.contains("open");
+
+  // Ctrl+K / Cmd+K — focus search
+  if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+    e.preventDefault();
+    const ts = document.getElementById("topbarSearch");
+    const ms = document.getElementById("mobileSearch");
+    if (ts && ts.offsetParent !== null) { ts.focus(); ts.select(); }
+    else if (ms) { openMobileSearch(); ms.focus(); }
+    return;
+  }
+
+  // ? — toggle keyboard help (when not typing)
+  if (e.key === "?" && !inInput && !modalOpen) {
+    e.preventDefault();
+    document.getElementById("kb-help").classList.toggle("open");
+    return;
+  }
+
+  // Esc — close any open panel
+  if (e.key === "Escape") {
+    if (kbOpen) { document.getElementById("kb-help").classList.remove("open"); return; }
+    closeModal();
+    return;
+  }
+
+  // Modal-specific shortcuts
+  if (modalOpen && !inInput) {
+    if (e.key === "ArrowLeft")  { navigateModal(-1); return; }
+    if (e.key === "ArrowRight") { navigateModal(1);  return; }
+    if (e.key === "b" || e.key === "B") { toggleModalBookmark(); return; }
+    if (e.key === "r" || e.key === "R") { toggleReadStatus(); return; }
+    if (e.key === "s" || e.key === "S") { copyArticleLink(); return; }
   }
 });
 
@@ -2041,49 +2328,22 @@ async function reloadWithFilters() {
   container.innerHTML = renderSkeletons();
   const btn = document.getElementById("load-more-btn");
   if (btn) { btn.disabled = true; btn.innerHTML = `<i class="ti ti-loader"></i> Filtering…`; }
-
-  let docs = [];
   try {
-    // Primary query: category + orderBy date (requires composite index in Firestore)
     const q = currentCategory === "all"
       ? query(collection(db, ARTICLES), orderBy("date","desc"), limit(200))
       : query(collection(db, ARTICLES), where("category","==",currentCategory), orderBy("date","desc"), limit(200));
     const snap = await getDocs(q);
-    docs = snap.docs;
-  } catch(primaryErr) {
-    // Fallback: query without orderBy (no index needed), then sort client-side
-    // This handles the case where the composite index (category + date) hasn't been created yet
-    console.warn("Primary filter query failed (index may be missing), using client-side sort fallback:", primaryErr.message);
-    try {
-      const fallbackQ = currentCategory === "all"
-        ? query(collection(db, ARTICLES), limit(500))
-        : query(collection(db, ARTICLES), where("category","==",currentCategory), limit(500));
-      const snap = await getDocs(fallbackQ);
-      // Sort by date descending on the client side
-      docs = snap.docs.sort((a, b) => {
-        const aDate = a.data().date?.toDate ? a.data().date.toDate() : new Date(a.data().date || 0);
-        const bDate = b.data().date?.toDate ? b.data().date.toDate() : new Date(b.data().date || 0);
-        return bDate - aDate;
-      });
-    } catch(fallbackErr) {
-      console.error("Filter fallback also failed:", fallbackErr);
-      container.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><i class="ti ti-alert-circle" style="font-size:36px;margin-bottom:10px;opacity:.4"></i><p style="font-size:14px;font-weight:600;color:var(--text2)">Could not load articles.</p><p style="font-size:11px;color:var(--text3);margin-top:4px">Check your connection and try again.</p></div>`;
-      if (btn) { btn.disabled = false; btn.innerHTML = `<i class="ti ti-refresh"></i> Retry`; }
-      isLoading = false;
-      return;
+    const filtered = filterDocs(snap.docs);
+    container.innerHTML = "";
+    modalArticleIds = filtered.map(d => d.id);
+    if (!filtered.length) {
+      container.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><i class="ti ti-filter-off" style="font-size:36px;margin-bottom:10px;opacity:.4"></i><p style="font-size:14px;font-weight:600;color:var(--text2)">No articles match your filters.</p><p style="font-size:11px;color:var(--text3);margin-top:4px">Try a wider date range or different importance level.</p></div>`;
+      if (btn) btn.style.display = "none";
+    } else {
+      filtered.forEach(d => container.insertAdjacentHTML("beforeend", renderCard(d)));
+      if (btn) btn.style.display = "none";
     }
-  }
-
-  const filtered = filterDocs(docs);
-  container.innerHTML = "";
-  modalArticleIds = filtered.map(d => d.id);
-  if (!filtered.length) {
-    container.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><i class="ti ti-filter-off" style="font-size:36px;margin-bottom:10px;opacity:.4"></i><p style="font-size:14px;font-weight:600;color:var(--text2)">No articles match your filters.</p><p style="font-size:11px;color:var(--text3);margin-top:4px">Try a wider date range or different importance level.</p></div>`;
-    if (btn) btn.style.display = "none";
-  } else {
-    filtered.forEach(d => container.insertAdjacentHTML("beforeend", renderCard(d)));
-    if (btn) btn.style.display = "none";
-  }
+  } catch(err) { console.error("Filter error:", err); }
   isLoading = false;
 }
 
@@ -2130,6 +2390,171 @@ async function doSearch(q) {
   } catch(err) {
     console.error("Search error:", err);
   }
+}
+
+/* ── Copy article link (share) ──────────────── */
+window.copyArticleLink = function() {
+  if (!currentOpenId) return;
+  const url = `${location.origin}${location.pathname}?article=${currentOpenId}`;
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = document.getElementById("modal-share-btn");
+    if (!btn) return;
+    btn.classList.add("copied");
+    btn.innerHTML = `<i class="ti ti-check"></i>`;
+    btn.title = "Copied!";
+    setTimeout(() => {
+      btn.classList.remove("copied");
+      btn.innerHTML = `<i class="ti ti-link"></i>`;
+      btn.title = "Copy link (S)";
+    }, 2000);
+  }).catch(() => {
+    // Fallback for browsers without clipboard API
+    const ta = document.createElement("textarea");
+    ta.value = url;
+    ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+  });
+};
+
+/* ── Search by tag (from modal tag chip) ── */
+window.searchByTag = function(tag) {
+  closeModal();
+  setTimeout(() => {
+    const input = document.getElementById("topbarSearch") || document.getElementById("mobileSearch");
+    if (input) { input.value = tag; handleSearch(tag); }
+  }, 220);
+};
+
+/* ── Mobile search toggle ───────────────── */
+function openMobileSearch() {
+  const bar = document.getElementById("mobile-search-bar");
+  const btn = document.getElementById("mobile-search-btn");
+  if (!bar) return;
+  bar.classList.add("open");
+  if (btn) btn.classList.add("active");
+  setTimeout(() => { const inp = document.getElementById("mobileSearch"); if (inp) inp.focus(); }, 260);
+}
+window.toggleMobileSearch = function() {
+  const bar = document.getElementById("mobile-search-bar");
+  const btn = document.getElementById("mobile-search-btn");
+  if (!bar) return;
+  const isOpen = bar.classList.toggle("open");
+  if (btn) btn.classList.toggle("active", isOpen);
+  if (isOpen) {
+    setTimeout(() => { const inp = document.getElementById("mobileSearch"); if (inp) inp.focus(); }, 260);
+  } else {
+    const inp = document.getElementById("mobileSearch");
+    if (inp) { inp.value = ""; handleSearch(""); }
+  }
+};
+
+/* ── Back to top ────────────────────────── */
+window.scrollToTop = function() {
+  document.getElementById("content")?.scrollTo({ top: 0, behavior: "smooth" });
+};
+(function initBackToTop() {
+  const content = document.getElementById("content");
+  const btn = document.getElementById("back-to-top");
+  if (!content || !btn) return;
+  content.addEventListener("scroll", () => {
+    btn.classList.toggle("visible", content.scrollTop > 400);
+  });
+})();
+
+/* ── Keyboard help panel close ──────────── */
+window.closeKbHelp = function(e) {
+  if (e.target === document.getElementById("kb-help")) {
+    document.getElementById("kb-help").classList.remove("open");
+  }
+};
+
+/* ── Deep link — open article from URL param on page load ── */
+(function checkDeepLink() {
+  const params = new URLSearchParams(location.search);
+  const articleId = params.get("article");
+  if (articleId) {
+    // Wait for initial load then open
+    setTimeout(async () => {
+      try {
+        const snap = await getDoc(doc(db, ARTICLES, articleId));
+        if (snap.exists()) {
+          if (!modalArticleIds.includes(articleId)) modalArticleIds.push(articleId);
+          openArticle(articleId);
+        }
+      } catch(e) { console.warn("Deep link open failed:", e); }
+    }, 800);
+  }
+})();
+
+/* ── Reading progress pills in sidebar ──── */
+async function updateSidebarProgress() {
+  const readIds = getReadArticles();
+  if (!readIds.length) return;
+  // For each category, get count from Firestore and compare with read
+  // This is lightweight — runs once on load using cached count data
+  try {
+    const snap = await getDocs(query(collection(db, ARTICLES), limit(500)));
+    const catCount = {}, catRead = {};
+    snap.docs.forEach(d => {
+      const cat = d.data().category || "other";
+      catCount[cat] = (catCount[cat] || 0) + 1;
+      if (readIds.includes(d.id)) catRead[cat] = (catRead[cat] || 0) + 1;
+    });
+    // Update nav items that have a matching category
+    document.querySelectorAll(".nav-item[data-cat]").forEach(item => {
+      const cat = item.getAttribute("data-cat");
+      if (!catCount[cat]) return;
+      const read = catRead[cat] || 0;
+      const total = catCount[cat];
+      let pill = item.querySelector(".nav-progress");
+      if (!pill) {
+        pill = document.createElement("span");
+        pill.className = "nav-progress";
+        // Insert before expand-icon if present, else append
+        const expIcon = item.querySelector(".expand-icon");
+        if (expIcon) item.insertBefore(pill, expIcon);
+        else item.appendChild(pill);
+      }
+      pill.textContent = `${read}/${total}`;
+    });
+  } catch(e) { /* silent */ }
+}
+
+/* ── Continue Reading strip ─────────────── */
+async function renderContinueStrip(allDocs) {
+  const readIds = getReadArticles();
+  // Find unread high-priority articles from current batch
+  const unreadHigh = allDocs
+    .filter(d => !readIds.includes(d.id) && d.data().importance === "high")
+    .slice(0, 3);
+  if (!unreadHigh.length) return;
+  const container = document.getElementById("continue-strip-container");
+  if (!container) return;
+  const items = unreadHigh.map(d => {
+    const data = d.data();
+    const tagCls = TAG_CLASS[data.category] || "t-tech";
+    const imp = (data.importance || "").toLowerCase();
+    const dotCls = imp === "high" ? "imp-high" : imp === "medium" ? "imp-med" : "imp-low";
+    const articleDate = data.date?.toDate ? data.date.toDate() : (data.date ? new Date(data.date) : null);
+    const dateStr = articleDate ? articleDate.toLocaleDateString("en-IN",{day:"2-digit",month:"short"}) : "";
+    return `<div class="continue-item" onclick="openArticle('${d.id}')">
+      <span class="continue-item-dot ${dotCls}"></span>
+      <span class="continue-item-title">${escHtml(data.title||"Untitled")}</span>
+      <span class="continue-item-cat ${tagCls}">${(data.category||"").toUpperCase()}</span>
+      <span class="continue-item-date">${dateStr}</span>
+    </div>`;
+  }).join("");
+  container.innerHTML = `
+    <div id="continue-strip">
+      <div class="continue-hdr">
+        <i class="ti ti-bookmark-filled"></i>
+        <span>Unread Must-Reads</span>
+        <button class="continue-all" onclick="document.getElementById('continue-strip').style.display='none'">Dismiss ×</button>
+      </div>
+      <div class="continue-list">${items}</div>
+    </div>`;
 }
 
 /* ── Auto-load dashboard on start ───────────────── */
