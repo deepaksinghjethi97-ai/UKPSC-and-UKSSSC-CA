@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
 <title>Current Affairs Hub — UKPSC &amp; UKSSSC</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css"/>
@@ -41,7 +41,7 @@ button{font-family:var(--font);cursor:pointer}
 .ti-loader{display:inline-block;animation:spin 1s linear infinite}
 
 /* ── LAYOUT ───────────────────────────────────────────── */
-#app{display:flex;min-height:100vh}
+#app{display:flex;min-height:100vh;min-height:100dvh}
 #main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
 
 /* ── SIDEBAR ──────────────────────────────────────────── */
@@ -49,7 +49,7 @@ button{font-family:var(--font);cursor:pointer}
   width:var(--sidebar-w);min-width:var(--sidebar-w);
   background:var(--bg2);border-right:1px solid var(--border);
   display:flex;flex-direction:column;
-  position:sticky;top:0;height:100vh;overflow-y:auto;z-index:200;
+  position:sticky;top:0;height:100vh;height:100dvh;overflow-y:auto;z-index:200;
   transition:transform .3s cubic-bezier(.4,0,.2,1);
   scrollbar-width:thin;scrollbar-color:var(--border) transparent;
 }
@@ -411,6 +411,7 @@ button{font-family:var(--font);cursor:pointer}
   box-shadow:0 32px 80px rgba(0,0,0,.7);margin:auto;
   will-change:transform,opacity;display:flex;flex-direction:column;
   max-height:calc(100vh - 32px);
+  max-height:calc(100dvh - 32px);
 }
 @keyframes modalIn{
   0%{opacity:0;transform:translateY(28px) scale(.96)}
@@ -646,7 +647,7 @@ button{font-family:var(--font);cursor:pointer}
 
 /* ── RESPONSIVE ───────────────────────────────────────── */
 @media(max-width:900px){
-  #sidebar{position:fixed;left:0;top:0;transform:translateX(-100%);z-index:200}
+  #sidebar{position:fixed;left:0;top:0;height:100vh;height:100dvh;transform:translateX(-100%);z-index:200}
   #sidebar.open{transform:translateX(0);box-shadow:4px 0 32px rgba(0,0,0,.7)}
   .menu-btn{display:flex}
   #content{padding:14px 16px}
@@ -1050,22 +1051,31 @@ kbd{
   #modal-overlay{
     padding:0;
     align-items:stretch;
+    /* Use dvh so overlay fills only the visible viewport (not behind browser chrome) */
+    height:100vh;
+    height:100dvh;
   }
   #modal{
     max-width:100%;
     width:100%;
     border-radius:0;
+    /* dvh = dynamic viewport height — excludes iOS Safari browser bars */
     max-height:100vh;
+    max-height:100dvh;
     min-height:100vh;
+    min-height:100dvh;
     margin:0;
     display:flex;
     flex-direction:column;
   }
   #m-body{
     flex:1;
+    min-height:0;
+    /* Bottom padding clears iPhone home indicator & Safari bottom bar */
+    padding-bottom:max(24px, env(safe-area-inset-bottom));
   }
   .modal-body{
-    padding:14px 12px 24px;
+    padding:14px 12px max(24px, env(safe-area-inset-bottom));
     overflow-x:hidden;
   }
   .rich-content{
