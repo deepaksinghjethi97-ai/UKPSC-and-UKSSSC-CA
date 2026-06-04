@@ -49,7 +49,7 @@ button{font-family:var(--font);cursor:pointer}
   width:var(--sidebar-w);min-width:var(--sidebar-w);
   background:var(--bg2);border-right:1px solid var(--border);
   display:flex;flex-direction:column;
-  position:sticky;top:0;height:100vh;overflow-y:auto;z-index:100;
+  position:sticky;top:0;height:100vh;overflow-y:auto;z-index:200;
   transition:transform .3s cubic-bezier(.4,0,.2,1);
   scrollbar-width:thin;scrollbar-color:var(--border) transparent;
 }
@@ -651,8 +651,8 @@ button{font-family:var(--font);cursor:pointer}
 
 /* ── SIDEBAR OVERLAY (mobile) ─────────────────────────── */
 #sidebar-overlay{
-  display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);
-  z-index:99;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);
+  z-index:98;
   animation:fadeIn .2s ease;
 }
 #sidebar-overlay.visible{display:block}
@@ -997,14 +997,46 @@ kbd{
 /* ── MODAL CHROME OVERFLOW FIXES ────────────── */
 @media(max-width:750px){
   .mc-btn span{display:none}
-  .mc-btn{padding:4px 6px}
+  .mc-btn{padding:6px 8px}
   .modal-nav-count{display:none}
 }
 @media(max-width:500px){
-  .modal-chrome{padding:7px 8px;gap:5px;row-gap:7px}
-  /* font stepper stays visible — moves to its own row on mobile */
-  .fs-stepper{order:-1;flex:0 0 auto}
-  .mc-right{flex-wrap:wrap;justify-content:flex-end;gap:4px}
+  .modal-chrome{
+    padding:8px 10px;
+    gap:0;
+    flex-direction:column;
+    align-items:stretch;
+    row-gap:0;
+  }
+  /* Row 1: tag + imp badge + title */
+  .mc-left{order:1;padding-bottom:6px}
+  .mc-title{
+    order:2;
+    font-size:13px;
+    white-space:normal;
+    overflow:visible;
+    text-overflow:unset;
+    padding-bottom:8px;
+    border-bottom:1px solid var(--border);
+  }
+  /* Row 2: all action buttons */
+  .mc-right{
+    order:3;
+    padding-top:8px;
+    flex-wrap:nowrap;
+    justify-content:space-between;
+    width:100%;
+    gap:0;
+  }
+  .fs-stepper{order:0;flex:0 0 auto}
+  .mc-btn{padding:7px 9px;font-size:12px}
+  .mc-btn i{font-size:15px}
+  .modal-nav-btn{padding:7px 9px}
+  .modal-nav-btn i{font-size:15px}
+  .modal-close{padding:7px 9px;font-size:17px}
+  .mc-divider{margin:0 2px}
+  .fs-step-btn{padding:5px 10px;font-size:14px}
+  .fs-cur-label{font-size:10px;line-height:26px}
 }
 
 /* ── TOPBAR OVERFLOW FIXES ──────────────────── */
@@ -1029,6 +1061,7 @@ kbd{
     display:flex;
     flex-direction:column;
   }
+  .modal-chrome{min-height:52px}
   #m-body{
     flex:1;
   }
