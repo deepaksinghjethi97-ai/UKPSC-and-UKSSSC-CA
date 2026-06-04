@@ -97,8 +97,13 @@ button{font-family:var(--font);cursor:pointer}
 .nav-item:hover i:first-child{transform:scale(1.15)}
 .expand-icon{margin-left:auto;font-size:11px;transition:transform .25s cubic-bezier(.4,0,.2,1);color:var(--text3)}
 .nav-item.open .expand-icon{transform:rotate(180deg)}
-.nav-sub{display:none;background:rgba(0,0,0,.15)}
-.nav-sub.open{display:block;animation:fadeUp .2s ease both}
+.nav-sub{
+  overflow:hidden;
+  max-height:0;
+  background:rgba(0,0,0,.15);
+  transition:max-height .28s cubic-bezier(.4,0,.2,1);
+}
+.nav-sub.open{max-height:600px;animation:none}
 .nav-sub .nav-item{font-size:12.5px;padding:7px 16px 7px 28px}
 .nav-sub .nav-item i:first-child{font-size:13px}
 
@@ -366,7 +371,7 @@ button{font-family:var(--font);cursor:pointer}
 
 /* ── ARTICLE MODAL ────────────────────────────────────── */
 #modal-overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;
+  position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:400;
   display:none;align-items:center;justify-content:center;
   padding:16px;overflow-y:auto;
   backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
@@ -652,10 +657,12 @@ button{font-family:var(--font);cursor:pointer}
 /* ── SIDEBAR OVERLAY (mobile) ─────────────────────────── */
 #sidebar-overlay{
   display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);
-  z-index:98;
+  z-index:199;
   animation:fadeIn .2s ease;
 }
 #sidebar-overlay.visible{display:block}
+/* Sidebar must be ABOVE its own overlay */
+#sidebar{z-index:200}
 
 /* ── FOCUS RING ACCESSIBILITY ─────────────────────────── */
 button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
@@ -810,8 +817,27 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 .tick-item{font-size:12px;color:var(--text2)}
 .tick-item i{color:var(--accent);font-size:13px}
 
-/* ── MOBILE SEARCH IN TOPBAR ────────────────── */
-@media(max-width:700px){
+/* ── MOBILE SIDEBAR TOUCH IMPROVEMENTS ─────────── */
+@media(max-width:900px){
+  /* Larger tap targets on mobile */
+  .nav-item{padding:11px 16px;min-height:44px}
+  .nav-sub .nav-item{padding:10px 16px 10px 32px;min-height:40px}
+  /* Active state feedback for touch */
+  .nav-item:active{background:var(--bg4);transform:none}
+  /* Visual cue that parent items expand */
+  .nav-item .expand-icon{
+    width:28px;height:28px;border-radius:6px;
+    background:var(--bg3);border:1px solid var(--border);
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px;margin-left:auto;flex-shrink:0;
+    transition:transform .25s cubic-bezier(.4,0,.2,1),background .2s,border-color .2s;
+  }
+  .nav-item.open .expand-icon{
+    background:rgba(79,110,247,.12);border-color:rgba(79,110,247,.25);
+  }
+  /* Sidebar: show scrollbar hint */
+  #sidebar{scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+}
   .sb-search{display:block}
   .topbar-search-wrap{display:none}
   #topbar{padding:10px 14px}
@@ -931,8 +957,33 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline
 .modal-tag-chip:hover{background:rgba(79,110,247,.1);border-color:var(--accent);color:var(--accent)}
 .modal-tag-chip i{font-size:10px}
 
-/* ── 7. LOAD MORE — end of results state ── */
-.end-of-results{
+/* ── 12. DATE GROUP HEADERS in cards grid ── */
+.date-group{
+  grid-column:1/-1;
+  display:flex;align-items:center;gap:10px;
+  margin-top:10px;margin-bottom:2px;
+}
+.date-group:first-child{margin-top:0}
+.date-group-label{
+  font-size:10.5px;font-weight:700;letter-spacing:.8px;
+  color:var(--text3);text-transform:uppercase;font-family:var(--mono);
+  white-space:nowrap;
+}
+.date-group-label.today{color:var(--green)}
+.date-group-label.yesterday{color:var(--amber)}
+.date-group-line{
+  flex:1;height:1px;
+  background:linear-gradient(90deg,var(--border),transparent);
+}
+.date-group-count{
+  font-size:9px;font-weight:600;font-family:var(--mono);
+  color:var(--text3);background:var(--bg3);
+  border:1px solid var(--border);border-radius:8px;
+  padding:1px 7px;white-space:nowrap;
+}
+
+/* load more row */
+.load-more-row{grid-column:1/-1;text-align:center;padding:10px 0 4px}
   text-align:center;padding:12px 0 20px;font-size:11.5px;
   color:var(--text3);display:flex;align-items:center;justify-content:center;gap:6px;
 }
@@ -1141,7 +1192,7 @@ kbd{
 
     <div class="nav-section">
       <div class="nav-label">National Affairs</div>
-      <div class="nav-item" onclick="toggleSub('sub-national',this)">
+      <div class="nav-item" onclick="toggleSub('sub-national',this,event)">
         <i class="ti ti-flag"></i> National <i class="ti ti-chevron-down expand-icon"></i>
       </div>
       <div class="nav-sub" id="sub-national">
@@ -1149,7 +1200,7 @@ kbd{
         <div class="nav-item" data-cat="tech" onclick="loadSection('tech','Technology','ti-cpu')"><i class="ti ti-cpu"></i> Technology</div>
         <div class="nav-item" data-cat="space" onclick="loadSection('space','Space','ti-rocket')"><i class="ti ti-rocket"></i> Space</div>
         <div class="nav-item" data-cat="appointments" onclick="loadSection('appointments','Appointments','ti-user-star')"><i class="ti ti-user-star"></i> Appointments</div>
-        <div class="nav-item" onclick="toggleSub('sub-sports',this)">
+        <div class="nav-item" onclick="toggleSub('sub-sports',this,event)">
           <i class="ti ti-trophy"></i> Sports <i class="ti ti-chevron-down expand-icon"></i>
         </div>
         <div class="nav-sub" id="sub-sports">
@@ -1174,7 +1225,7 @@ kbd{
 
     <div class="nav-section">
       <div class="nav-label">International</div>
-      <div class="nav-item" onclick="toggleSub('sub-intl',this)">
+      <div class="nav-item" onclick="toggleSub('sub-intl',this,event)">
         <i class="ti ti-world"></i> International <i class="ti ti-chevron-down expand-icon"></i>
       </div>
       <div class="nav-sub" id="sub-intl">
@@ -1519,7 +1570,9 @@ document.addEventListener("click", e => {
   }
 });
 
-window.toggleSub = (id, el) => {
+window.toggleSub = (id, el, event) => {
+  // Stop the click from bubbling to the document-level "close sidebar" handler
+  if (event) event.stopPropagation();
   const sub = document.getElementById(id);
   const open = sub.classList.toggle("open");
   el.classList.toggle("open", open);
@@ -1806,6 +1859,68 @@ function renderTopPicks(docs) {
     </div>`;
 }
 
+/* ── Date group label helper ─────────────────────── */
+function getDateGroupLabel(date) {
+  if (!date) return "Unknown Date";
+  const today = new Date(); today.setHours(0,0,0,0);
+  const yesterday = new Date(today); yesterday.setDate(yesterday.getDate()-1);
+  const dDay = new Date(date); dDay.setHours(0,0,0,0);
+  const diff = today - dDay;
+  if (diff === 0) return { label:"Today", cls:"today" };
+  if (diff === 86400000) return { label:"Yesterday", cls:"yesterday" };
+  if (diff < 7*86400000) {
+    const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+    return { label:days[dDay.getDay()], cls:"" };
+  }
+  return { label:date.toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"}), cls:"" };
+}
+
+// Track which date groups have already been rendered (for pagination continuity)
+let renderedDateGroups = new Set();
+
+/* ── Render cards grouped by date ───────────────── */
+function renderCardsWithDateGroups(docs, container, fresh) {
+  if (fresh) renderedDateGroups = new Set();
+
+  // Group docs by calendar date key
+  const groups = [];
+  const groupMap = {};
+  docs.forEach(d => {
+    const data = d.data();
+    const articleDate = data.date?.toDate ? data.date.toDate() : (data.date ? new Date(data.date) : null);
+    const key = articleDate ? articleDate.toLocaleDateString("en-IN",{day:"2-digit",month:"2-digit",year:"numeric"}) : "unknown";
+    if (!groupMap[key]) {
+      groupMap[key] = { key, date:articleDate, docs:[] };
+      groups.push(groupMap[key]);
+    }
+    groupMap[key].docs.push(d);
+  });
+
+  groups.forEach(group => {
+    // Only add date header once (even across paginated loads)
+    if (!renderedDateGroups.has(group.key)) {
+      renderedDateGroups.add(group.key);
+      const { label, cls } = group.date ? getDateGroupLabel(group.date) : { label:"Unknown Date", cls:"" };
+      const countLabel = `${group.docs.length} article${group.docs.length !== 1 ? "s" : ""}`;
+      container.insertAdjacentHTML("beforeend", `
+        <div class="date-group">
+          <span class="date-group-label${cls?" "+cls:""}">${label}</span>
+          <div class="date-group-line"></div>
+          <span class="date-group-count" data-date-key="${group.key}">${countLabel}</span>
+        </div>`);
+    } else {
+      // If this group already has a header (pagination), update the article count
+      const badge = container.querySelector(`.date-group-count[data-date-key="${group.key}"]`);
+      if (badge) {
+        const prev = parseInt(badge.textContent) || 0;
+        const newTotal = prev + group.docs.length;
+        badge.textContent = `${newTotal} article${newTotal !== 1 ? "s" : ""}`;
+      }
+    }
+    group.docs.forEach(d => container.insertAdjacentHTML("beforeend", renderCard(d)));
+  });
+}
+
 /* ── Fetch cards from Firestore ─────────────────── */
 async function fetchCards(fresh = false) {
   if (isLoading || (!hasMore && !fresh)) return;
@@ -1863,7 +1978,8 @@ async function fetchCards(fresh = false) {
       updateSidebarProgress();
     }
 
-    snap.docs.forEach(d => container.insertAdjacentHTML("beforeend", renderCard(d)));
+    // Group docs by date and render with date headers
+    renderCardsWithDateGroups(snap.docs, container, fresh);
 
     lastDoc = snap.docs[snap.docs.length - 1];
     hasMore = snap.docs.length === PAGE_SIZE;
