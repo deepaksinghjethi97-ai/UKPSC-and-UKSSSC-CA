@@ -1218,6 +1218,154 @@ kbd{
 /* ── Hide nav-count divider when count is empty ──────────────────── */
 #nav-count:empty + .mc-divider{display:none}
 
+
+/* ═══════════════════════════════════════════════════
+   MOBILE BOTTOM ACTION BAR
+   Hidden on desktop, replaces cluttered top chrome
+   on mobile with thumb-reachable controls
+═══════════════════════════════════════════════════ */
+.modal-bottom-bar{
+  display:none; /* hidden on desktop */
+}
+
+@media(max-width:600px){
+  /* ── Slim top chrome on mobile: just counter + close ── */
+  .modal-chrome{
+    padding:0 !important;
+    border-bottom:1px solid var(--border);
+    flex-wrap:nowrap !important;
+    flex-direction:row !important;
+    align-items:center !important;
+    min-height:44px;
+  }
+  .mc-right{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 12px;
+    gap:0 !important;
+  }
+  /* Hide desktop-only controls from top bar on mobile */
+  .fs-stepper,
+  #modal-bm-btn,
+  #modal-read-btn,
+  .mc-right > .mc-divider{
+    display:none !important;
+  }
+  /* Article counter — left side */
+  #nav-count{
+    font-size:12px;
+    color:var(--text3);
+    font-family:var(--mono);
+    padding:0;
+  }
+  /* Close button — right side, larger touch target */
+  .modal-close{
+    padding:8px 10px !important;
+    font-size:18px !important;
+    border-radius:8px !important;
+  }
+
+  /* ── Bottom action bar — slides up from bottom ── */
+  .modal-bottom-bar{
+    display:flex;
+    align-items:center;
+    justify-content:space-around;
+    flex-shrink:0;
+    border-top:1px solid var(--border);
+    background:var(--bg2);
+    padding:8px 8px;
+    padding-bottom:max(12px, env(safe-area-inset-bottom));
+    gap:4px;
+    position:sticky;
+    bottom:0;
+    z-index:10;
+  }
+
+  .mbb-btn{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:3px;
+    flex:1;
+    padding:8px 4px;
+    background:transparent;
+    border:none;
+    border-radius:10px;
+    color:var(--text3);
+    cursor:pointer;
+    transition:background .15s, color .15s;
+    min-width:0;
+    font-family:var(--font);
+  }
+  .mbb-btn i{
+    font-size:18px;
+    line-height:1;
+  }
+  .mbb-btn span{
+    font-size:10px;
+    font-weight:500;
+    letter-spacing:.2px;
+    white-space:nowrap;
+  }
+  .mbb-btn:hover, .mbb-btn:active{
+    background:var(--bg3);
+    color:var(--text);
+  }
+  .mbb-btn.mbb-active-save{
+    color:var(--amber);
+  }
+  .mbb-btn.mbb-active-save i::before{content:"\eb2c"} /* ti-bookmark-filled */
+  .mbb-btn.mbb-active-read{
+    color:var(--green);
+  }
+  .mbb-close-large{
+    color:var(--text3);
+  }
+  .mbb-close-large:hover{
+    color:var(--red);
+    background:rgba(247,90,124,.08);
+  }
+  .mbb-font{
+    flex:0.7;
+  }
+  .mbb-divider{
+    width:1px;
+    height:32px;
+    background:var(--border);
+    flex-shrink:0;
+    margin:0 2px;
+  }
+
+  /* m-body must shrink to leave room for sticky bottom bar */
+  #m-body{
+    flex:1;
+    min-height:0;
+  }
+}
+
+
+/* Mobile-only article title in top chrome bar */
+.mc-mobile-title{
+  display:none;
+}
+@media(max-width:600px){
+  .mc-mobile-title{
+    display:block;
+    flex:1;
+    font-size:12px;
+    font-weight:600;
+    color:var(--text2);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    padding:0 8px;
+    text-align:center;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1488,7 +1636,7 @@ kbd{
   </button>
 
   <div id="modal">
-    <!-- Lean chrome: utility only, no nav -->
+    <!-- Desktop chrome: full controls in one bar -->
     <div class="modal-chrome">
       <div class="mc-right">
         <div class="fs-stepper">
@@ -1506,8 +1654,35 @@ kbd{
         <div class="mc-divider"></div>
         <span class="modal-nav-count" id="nav-count"></span>
         <div class="mc-divider"></div>
+        <span class="mc-mobile-title" id="mc-mobile-title"></span>
         <button class="modal-close" onclick="closeModal()" title="Close (Esc)"><i class="ti ti-x"></i></button>
       </div>
+    </div>
+
+    <!-- Mobile-only bottom action bar (hidden on desktop via CSS) -->
+    <div class="modal-bottom-bar" id="modal-bottom-bar">
+      <button class="mbb-btn mbb-font" onclick="stepFontSize(-1)" title="Smaller text">
+        <i class="ti ti-letter-case-lower"></i>
+        <span>Aa−</span>
+      </button>
+      <button class="mbb-btn mbb-font" onclick="stepFontSize(1)" title="Larger text">
+        <i class="ti ti-letter-case-upper"></i>
+        <span>Aa+</span>
+      </button>
+      <div class="mbb-divider"></div>
+      <button class="mbb-btn" id="mbb-save-btn" onclick="toggleModalBookmark()">
+        <i class="ti ti-bookmark"></i>
+        <span>Save</span>
+      </button>
+      <button class="mbb-btn" id="mbb-read-btn" onclick="toggleReadStatus()">
+        <i class="ti ti-check"></i>
+        <span id="mbb-read-txt">Read</span>
+      </button>
+      <div class="mbb-divider"></div>
+      <button class="mbb-btn mbb-close-large" onclick="closeModal()">
+        <i class="ti ti-x"></i>
+        <span>Close</span>
+      </button>
     </div>
 
     <!-- hidden stubs kept for JS compatibility -->
@@ -2130,6 +2305,8 @@ window.openArticle = async function(id) {
     const titleEl = document.getElementById("m-title");
     titleEl.textContent = d.title || "Untitled";
     titleEl.title = d.title || "Untitled";
+    const mcMobileTitle = document.getElementById("mc-mobile-title");
+    if (mcMobileTitle) mcMobileTitle.textContent = d.title || "Untitled";
     document.getElementById("m-date").textContent = dateStr;
     document.getElementById("m-cat").textContent = d.category || "";
     const impEl = document.getElementById("m-imp");
@@ -2188,23 +2365,33 @@ window.openArticle = async function(id) {
 };
 
 function updateModalToolbar(id) {
-  const bmBtn = document.getElementById("modal-bm-btn");
-  const rdBtn = document.getElementById("modal-read-btn");
-  const rdTxt = document.getElementById("read-btn-txt");
+  const bmBtn  = document.getElementById("modal-bm-btn");
+  const rdBtn  = document.getElementById("modal-read-btn");
+  const rdTxt  = document.getElementById("read-btn-txt");
+  const mbbSave = document.getElementById("mbb-save-btn");
+  const mbbRead = document.getElementById("mbb-read-btn");
+  const mbbReadTxt = document.getElementById("mbb-read-txt");
+
   if (isBookmarked(id)) {
     bmBtn.classList.add("bm-active");
     bmBtn.innerHTML = `<i class="ti ti-bookmark-filled"></i> Saved`;
+    mbbSave?.classList.add("mbb-active-save");
   } else {
     bmBtn.classList.remove("bm-active");
     bmBtn.innerHTML = `<i class="ti ti-bookmark"></i> Save`;
+    mbbSave?.classList.remove("mbb-active-save");
   }
   if (isRead(id)) {
     rdBtn.classList.add("read-active");
     rdBtn.classList.remove("active");
     rdTxt.textContent = "Unmark Read";
+    mbbRead?.classList.add("mbb-active-read");
+    if (mbbReadTxt) mbbReadTxt.textContent = "Unread";
   } else {
     rdBtn.classList.remove("read-active","active");
     rdTxt.textContent = "Mark Read";
+    mbbRead?.classList.remove("mbb-active-read");
+    if (mbbReadTxt) mbbReadTxt.textContent = "Read";
   }
 }
 
@@ -2632,6 +2819,7 @@ async function reloadWithFilters() {
   const container = document.getElementById("cards-container");
   if (!container) { isLoading = false; return; }
   container.innerHTML = renderSkeletons();
+  container.dataset.lastDateSep = "";
   const btn = document.getElementById("load-more-btn");
   if (btn) { btn.disabled = true; btn.innerHTML = `<i class="ti ti-loader"></i> Filtering…`; }
   try {
@@ -2641,6 +2829,7 @@ async function reloadWithFilters() {
     const snap = await getDocs(q);
     const filtered = filterDocs(snap.docs);
     container.innerHTML = "";
+    container.dataset.lastDateSep = "";
     modalArticleIds = filtered.map(d => d.id);
     if (!filtered.length) {
       container.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><i class="ti ti-filter-off" style="font-size:36px;margin-bottom:10px;opacity:.4"></i><p style="font-size:14px;font-weight:600;color:var(--text2)">No articles match your filters.</p><p style="font-size:11px;color:var(--text3);margin-top:4px">Try a wider date range or different importance level.</p></div>`;
@@ -2681,6 +2870,7 @@ async function doSearch(q) {
     const snap = await getDocs(query(collection(db, ARTICLES), orderBy("date","desc"), limit(100)));
     const container = document.getElementById("cards-container");
     container.innerHTML = "";
+    container.dataset.lastDateSep = "";
     const matches = snap.docs.filter(d => {
       const data = d.data();
       return (data.title||"").toLowerCase().includes(lower)
